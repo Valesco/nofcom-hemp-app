@@ -144,6 +144,9 @@ window.onload = function() {
 	var current_randomized_category;
 	var current_category_id = Math.floor(Math.random() * 1) + 0;
 
+	document.getElementsByClassName("main_menu_container")[0].style.display="none";
+	document.getElementById("username").focus();
+
 	document.getElementById("alone").onclick = function() {
 		//fillQuestions();
 		//hideMainMenuShowQandA();
@@ -151,8 +154,24 @@ window.onload = function() {
 	}
 
 	document.getElementById("group").onclick = function() {
-		//hideMainMenuShowQandA();
-		fillQuestions();
+		getGroups();
+	}
+
+	document.getElementById("expl").onclick = function() {
+		document.getElementsByClassName("about_container")[0].style.display="block";
+	}
+
+	document.getElementsByClassName("chosen_menu")[0].onclick = function() {
+		document.getElementsByClassName("main_menu_container")[0].style.display="block";
+		document.getElementsByClassName("category_container")[0].style.display="none";
+		document.getElementsByClassName("question_container")[0].style.display="none";
+		document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
+		document.getElementsByClassName("lobby_container")[0].style.display="none";
+	}
+
+	document.getElementById("chosen_username").onclick = function() {
+		document.getElementsByClassName("main_menu_container")[0].style.display="block";
+		document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
 	}
 
 	function hideMainMenuShowQandA() {
@@ -164,6 +183,12 @@ window.onload = function() {
 	function hideQandAShowMainMenu() {
 		document.getElementsByClassName("main_menu_container")[0].style.display="block";
 		document.getElementsByClassName("question_container")[0].style.display="none";
+	}
+
+	function getGroups() {
+		document.getElementsByClassName("main_menu_container")[0].style.display="none";
+		document.getElementsByClassName("lobby_container")[0].style.display="block";
+		console.log("Loading groups");
 	}
 
 	function emptyQuestionAnswers() {

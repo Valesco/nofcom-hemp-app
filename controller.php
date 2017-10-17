@@ -1,27 +1,34 @@
 <?php
+    if(session_id() == '' || !isset($_SESSION)) {
+        session_start();
+    }
+
     if (isset($_GET['function'])) {
         if ($_GET['function'] == "validate") {
             validateAnswer();
         } else if ($_GET['function'] == "getQandA") {
             getQuestionAndAnswers();
         } else if ($_GET['function'] == "getUserProgress") {
-            if(isset($_SESSION['user_game'])) {
+            if(isset($_SESSION['user_id'])) {
                 getUserProgress();
             } else {
-                createUser();
+                echo "new_user";
             }
+        } else if ($_GET['function'] == "newUser") {
+            createUser();
         }
     }
 
     function getUserProgress() {
         $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
-
         mysqli_close($mysqli);
     }
 
     function createUser() {
         $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
-
+        $user_name = $mysqli->real_escape_string($_GET['username']);
+        $query = "INSERT INTO users (user_name, group_id, 0, time_created) VALUES ()";
+        $_SESSION["user_id"] = 0;
         mysqli_close($mysqli);
     }
 

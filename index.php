@@ -19,6 +19,43 @@
     </head>
     <body>
         <div class="main_content">
+            <div class="dark_overlay lobby_container">
+                <div class="lobby">
+                    <h1>In welke groep zit je?</h1>
+                    <div class="lobby_item_list">
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+                    </div>
+                    <div class="chosen_button" id="chosen_new_group">
+                        <p>Nieuwe groep aanmaken</p>
+                    </div>
+                    <div class="chosen_button chosen_menu">
+                        <p>Terug naar menu</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dark_overlay new_user_prompt_container">
+                <div class="new_user_prompt">
+                    <h1>Wat is je naam?</h1>
+                    <input id="username" type="text" name="username">
+                    <div class="chosen_button" id="chosen_username">
+                        <p>Doorgaan</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dark_overlay about_container">
+                <div class="chosen_button chosen_menu">
+                    <p>Terug naar menu</p>
+                </div>
+            </div>
             <div class="chosen_container">
                 <div id="chosen_answer">
                     <p id="chosen_answer_question">Je gekozen antwoord is:</p>
