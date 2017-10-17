@@ -52,8 +52,10 @@
                 </div>
             </div>
             <div class="dark_overlay about_container">
-                <div class="chosen_button chosen_menu">
-                    <p>Terug naar menu</p>
+                <div class="about">
+                    <div class="chosen_button chosen_menu">
+                        <p>Terug naar menu</p>
+                    </div>
                 </div>
             </div>
             <div class="chosen_container">

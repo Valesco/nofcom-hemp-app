@@ -574,7 +574,7 @@ body {
 }
 
 .new_user_prompt input {
-    height: 42px;
+    height: 43px;
     width: 100%;
     text-align: center;
     font-size: 22px;
@@ -591,4 +591,10 @@ body {
 
 .about_container {
     display:none;
+}
+
+.about {
+    width:80%;
+    margin:0 auto;
+    margin-top:120px;
 }

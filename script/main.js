@@ -159,14 +159,18 @@ window.onload = function() {
 
 	document.getElementById("expl").onclick = function() {
 		document.getElementsByClassName("about_container")[0].style.display="block";
+		document.getElementsByClassName("main_menu_container")[0].style.display="none";
 	}
 
-	document.getElementsByClassName("chosen_menu")[0].onclick = function() {
-		document.getElementsByClassName("main_menu_container")[0].style.display="block";
-		document.getElementsByClassName("category_container")[0].style.display="none";
-		document.getElementsByClassName("question_container")[0].style.display="none";
-		document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
-		document.getElementsByClassName("lobby_container")[0].style.display="none";
+	for(var i = 0; i < 2; i++) {
+		document.getElementsByClassName("chosen_menu")[i].onclick = function() {
+			document.getElementsByClassName("main_menu_container")[0].style.display="block";
+			document.getElementsByClassName("category_container")[0].style.display="none";
+			document.getElementsByClassName("question_container")[0].style.display="none";
+			document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
+			document.getElementsByClassName("lobby_container")[0].style.display="none";
+			document.getElementsByClassName("about_container")[0].style.display="none";
+		}
 	}
 
 	document.getElementById("chosen_username").onclick = function() {
