@@ -148,8 +148,6 @@ window.onload = function() {
 	document.getElementById("username").focus();
 
 	document.getElementById("alone").onclick = function() {
-		//fillQuestions();
-		//hideMainMenuShowQandA();
 		fillQuestions();
 	}
 
@@ -233,7 +231,6 @@ window.onload = function() {
 					if(!game_started) {
 						document.getElementsByClassName("category_container")[0].style.display="block";
 						console.log("do et");
-						//document.getElementsByClassName("category_name")[0].innerHTML=questions_answers.split('|')[1];
 						var category_timer = setInterval(function() {
 							time_elapsed--;
 							document.getElementById("countdown").innerHTML = time_elapsed;
@@ -258,11 +255,9 @@ window.onload = function() {
 			}
 		}
 		function fillContent(questions_answers) {
-			//console.log("remove");
 			document.getElementsByClassName("question_container")[0].classList.remove("slide-out-bottom");
 			document.getElementsByClassName("question_container")[0].classList.remove("slide-in-bottom");
 			//console.log(document.getElementsByClassName("question_container"));
-			void document.getElementsByClassName("question_container")[0].offsetWidth;
 			//console.log(document.getElementsByClassName("question_container")[0].classList);
 			if (questions_answers == "false") return false;
 			question = questions_answers.split('|')[0];
