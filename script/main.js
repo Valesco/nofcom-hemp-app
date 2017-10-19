@@ -51,6 +51,12 @@ function init() {
 	loader.options.convertUpAxis = true;
 	loader.load( 'assets/models/hemp_total.dae', function ( collada ) {
 		model = collada.scene;
+		var skybox = model.children[0].children[1];
+		//skybox.material = new THREE.MeshBasicMaterial( {map: texture, color: 0x00ff00} );
+		var skybox_material = skybox.material[1];
+		console.log(skybox_material);
+		skybox_material.emissiveIntensity = 0;
+		skybox_material.color = {r: 2.5, g: 2.5, b: 2.5};
 	});
 	loader.load( 'assets/models/blades.dae', function ( collada ) {
 		blades = collada.scene;
@@ -58,22 +64,25 @@ function init() {
 	loader.load( 'assets/models/mill.dae', function ( collada ) {
 		mill = collada.scene;
 	});
+
 	//loader.load( 'assets/models/restaurant.dae', function ( collada ) {
 		//restaurant = collada.scene;
 	//});
-	var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
+	var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.6 );
 	scene.add( ambientLight );
-	var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+
+	var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.75 );
 	directionalLight.position.set( 1, 1, 0 ).normalize();
 	scene.add( directionalLight );
 
 	var light = new THREE.PointLight( 0xFFC107, 3, 120 );
 	light.position.set( 50, 85, 50 );
-	scene.add( light );
+	//scene.add( light );
 
-	renderer = new THREE.WebGLRenderer({ alpha: true });
+	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio*0.75 );
 	renderer.setSize( window.innerWidth, window.innerHeight );
+
 	container.appendChild( renderer.domElement );
 	window.addEventListener( 'resize', onWindowResize, false );
 
@@ -100,7 +109,7 @@ function init() {
 		console.log(bird);
 		scene.add( bird );
 	}
-	scene.fog = new THREE.FogExp2( 0x89b6d6, 0.005 );
+	//scene.fog = new THREE.FogExp2( 0x89b6d6, 0.005 );
 }
 
 function onWindowResize() {
