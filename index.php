@@ -26,13 +26,6 @@
                         <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
                         <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
                         <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
                     </div>
                     <div class="chosen_button" id="chosen_new_group">
                         <p>Nieuwe groep aanmaken</p>
@@ -76,7 +69,9 @@
                 <h1 class="vibrate-1">Loading..</h1>
                 <h1 class="vibrate-1" id="debug"></h1>
             </div>
-            <h1 class="title">Hempensermeerpolder <p> - Trivia - </p></h1>
+            <div class="logo_container">
+                <img src="assets/img/logo.png" class="test_logo">
+            </div>
             <div id="container"></div>
             <div class="main_menu_container slide-in-bottom">
                 <div class="main_menu_item flip-in-hor-bottom" id="group">Groep</div>
@@ -100,11 +95,14 @@
             </div>
             <div class="final_score_container">
                 <div class="pos_score">Eindscore komt hier</div>
-                <div class="menu_button"></div>
+                <div class="chosen_button chosen_menu">
+                    <p>Terug naar menu</p>
+                </div>
             </div>
         </div>
     </body>
     <script type="text/javascript" src="script/bird.js"></script>
     <script type="text/javascript" src="script/birds_engine.js"></script>
     <script type="text/javascript" src="script/main.js"></script>
+    <script type="text/javascript" src="script/menu.js"></script>
 </html>

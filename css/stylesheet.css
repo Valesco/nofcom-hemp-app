@@ -151,10 +151,10 @@ body {
     margin:0px;
     padding:0px;
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#66aee2+1,edf0ff+80 */
-    background: #66aee2; /* Old browsers */
+    /* background: #66aee2; */ /* Old browsers */
     background: -moz-linear-gradient(top, #66aee2 1%, #edf0ff 80%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, #66aee2 1%,#edf0ff 80%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom, #66aee2 1%,#edf0ff 80%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    /* background: -webkit-linear-gradient(top, #66aee2 1%,#edf0ff 80%); */ /* Chrome10-25,Safari5.1-6 */
+    /* background: linear-gradient(to bottom, #66aee2 1%,#edf0ff 80%); */ /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66aee2', endColorstr='#edf0ff',GradientType=0 ); /* IE6-9 */
     font-family: 'Open Sans', cursive;
     cursor: default;
@@ -196,6 +196,13 @@ body {
     height:100%;
     background-color: rgba(51, 51, 51, 0.95);
     display:none;
+}
+
+.final_score_container .chosen_menu {
+    bottom: 30px;
+    /* width: 80%; */
+    /* margin: 0 auto; */
+    position: absolute;
 }
 
 .main_score {
@@ -242,6 +249,7 @@ body {
     margin-top:10px;
     padding: 10px;
     font-size: 19px;
+    font-weight: bold;
     width:80%;
     border-radius: 10px;
 }
@@ -315,6 +323,7 @@ body {
     margin: 9px 0px 9px 0px;
     padding: 20px 0px 20px 0px;
     border-radius: 10px;
+    font-weight: bold;
 }
 
 #chosen_button p {
@@ -385,14 +394,14 @@ body {
     padding-bottom:10px;
     padding-top: 3px;
     position:absolute;
-    background-color: rgba(49, 49, 49, 0.47);
+    background-color: rgba(255, 255, 255, 0.86);
 }
 
 .main_menu_item {
     cursor: pointer;
     margin: 0 auto;
     margin-top: 10px;
-    padding: 10px;
+    padding: 8px;
     width:80%;
     border-radius: 10px;
 }
@@ -408,12 +417,12 @@ body {
 }
 
 #alone {
-    background-color: #e74c3c;
+    background-color: #795f50;
     color:white;
 }
 
 #expl {
-    background-color: #f39c12;
+    background-color: #90b531;
     color:white;
 }
 
@@ -521,11 +530,14 @@ body {
 }
 
 .lobby_item_list {
-    background-color: rgba(255, 255, 255, 0.73);
+    background-color: rgba(255, 255, 255, 0.13);
     display: inline-block;
     overflow: auto;
     width: 100%;
     height: 230px;
+    padding: 20px 0px 20px 0px;
+    0: 10px
+    border-radius:;
     border-radius: 10px;
 }
 
@@ -564,13 +576,24 @@ body {
 
 .new_user_prompt {
     margin: 0 auto;
-    margin-top: 40%;
+    margin-top: 180px;
     text-align: center;
     width: 75%;
 }
 
 .new_user_prompt h1 {
     color:white;
+}
+
+.logo_container {
+    background-color:white;
+    width:100%;
+}
+
+.test_logo {
+    padding: 10px 10px 2px 15px;
+    width: 90%;
+    z-index:999;
 }
 
 .new_user_prompt input {

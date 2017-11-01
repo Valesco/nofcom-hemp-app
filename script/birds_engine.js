@@ -1,7 +1,7 @@
 // Based on http://www.openprocessing.org/visuals/?visualID=6910
 		var Boid = function() {
 			var vector = new THREE.Vector3(),
-			_acceleration, _width = 0, _height = 0, _depth = 0, _goal, _neighborhoodRadius = 100,
+			_acceleration, _width = 200, _height = 200, _depth = 200, _goal, _neighborhoodRadius = 100,
 			_maxSpeed = 0.1, _maxSteerForce =  0.5, _avoidWalls = false;
 			this.position = new THREE.Vector3();
 			this.velocity = new THREE.Vector3();
