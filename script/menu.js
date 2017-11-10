@@ -4,8 +4,50 @@ window.onload = function() {
 	var total_categories_used = [];
 	var current_randomized_category;
 	var current_category_id = Math.floor(Math.random() * 1) + 0;
+	var username = readCookie('name');
+	checkUsername(username,"check");
 
-	document.getElementsByClassName("main_menu_container")[0].style.display="none";
+	function toggleFullScreen() {
+		var doc = window.document;
+		var docEl = doc.documentElement;
+
+		var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+		var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+		if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+			requestFullScreen.call(docEl);
+		} else {
+			cancelFullScreen.call(doc);
+		}
+	}
+
+	toggleFullScreen();
+
+	function createCookie(name,value,days) {
+		var expires = "";
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime() + (days*24*60*60*1000));
+			expires = "; expires=" + date.toUTCString();
+			}
+		document.cookie = name + "=" + value + expires + "; path=/";
+	}
+
+	function readCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	}
+
+	function eraseCookie(name) {
+		createCookie(name,"",-1);
+	}
+
 	document.getElementById("username").focus();
 
 	document.getElementById("alone").onclick = function() {
@@ -21,6 +63,16 @@ window.onload = function() {
 		document.getElementsByClassName("main_menu_container")[0].style.display="none";
 	}
 
+	document.getElementById("chosen_new_group").onclick = function() {
+		document.getElementsByClassName("lobby")[0].style.display="none";
+		document.getElementsByClassName("create_group_container")[0].style.display="block";
+	}
+
+	document.getElementsByClassName("chosen_menu_group")[0].onclick = function() {
+		document.getElementsByClassName("lobby")[0].style.display="block";
+		document.getElementsByClassName("create_group_container")[0].style.display="none";
+	}
+
 	for(var i = 0; i < 3; i++) {
 		document.getElementsByClassName("chosen_menu")[i].onclick = function() {
 			document.getElementsByClassName("main_menu_container")[0].style.display="block";
@@ -34,8 +86,12 @@ window.onload = function() {
 	}
 
 	document.getElementById("chosen_username").onclick = function() {
-		document.getElementsByClassName("main_menu_container")[0].style.display="block";
-		document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
+		var name = document.getElementById("username").value;
+		if (name.length > 1) {
+			document.getElementsByClassName("main_menu_container")[0].style.display="block";
+			document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
+			checkUsername(name);
+		}
 	}
 
 	function hideMainMenuShowQandA() {
@@ -62,11 +118,53 @@ window.onload = function() {
 		}
 	}
 
+	for (var i = 0; i < 4; i++) {
+		document.getElementById(i).onclick = function(i) {
+			document.getElementsByClassName("question_container")[0].classList.remove("slide-out-bottom");
+			void document.getElementsByClassName("question_container")[0].offsetWidth;
+			document.getElementsByClassName("question_container")[0].className += " slide-out-bottom";
+			document.getElementsByClassName("chosen_container")[0].style.display="block";
+			document.getElementById("chosen_answer_content").innerHTML = this.innerHTML;
+
+			var question_id_temp = document.getElementsByClassName("question")[0].id;
+			var question_id = question_id_temp.substring(0,question_id_temp.indexOf("_"));
+			var potential_answer = this.id;
+			document.getElementById("chosen_yes").onclick = function() {
+				validateQuestion(question_id,potential_answer);
+			}
+			document.getElementById("chosen_no").onclick = function() {
+				document.getElementsByClassName("chosen_container")[0].style.display="none";
+				document.getElementsByClassName("question_container")[0].classList.remove("slide-out-bottom");
+				document.getElementsByClassName("question_container")[0].className += " slide-in-bottom";
+			}
+		}
+	}
+
 	function showFinalScoreGroup() {
 		document.getElementsByClassName("main_menu_container")[0].style.display="none";
 		document.getElementsByClassName("question_container")[0].style.display="none";
 		document.getElementsByClassName("category_container")[0].style.display="none";
 		document.getElementsByClassName("final_score_container")[0].style.display="block";
+	}
+
+	function checkUsername(temp_name,check) {
+		console.log("Checking username..");
+		if (check == "check") {
+			if (temp_name == "" || temp_name == null || temp_name.length < 1) {
+				console.log("Cookie is not set");
+				document.getElementsByClassName("main_menu_container")[0].style.display="none";
+				document.getElementsByClassName("new_user_prompt_container")[0].style.display="block";
+			} else {
+				document.getElementsByClassName("main_menu_container")[0].style.display="block";
+				console.log("Username set, it's '"+username+"'");
+
+			}
+		} else {
+			if (temp_name != "" || temp_name != null || temp_name.length > 1) {
+				console.log(temp_name);
+				createCookie('name',temp_name,7);
+			}
+		}
 	}
 
 	function fillQuestions() {
@@ -130,39 +228,6 @@ window.onload = function() {
 				document.getElementById(i).innerHTML = possible_answers[i];
 			}
 			document.getElementsByClassName("question_container")[0].className += " slide-in-bottom";
-		}
-	}
-
-	for (var i = 0; i < 4; i++) {
-		document.getElementById(i).onclick = function(i) {
-			document.getElementsByClassName("question_container")[0].classList.remove("slide-out-bottom");
-			void document.getElementsByClassName("question_container")[0].offsetWidth;
-			document.getElementsByClassName("question_container")[0].className += " slide-out-bottom";
-			document.getElementsByClassName("chosen_container")[0].style.display="block";
-			document.getElementById("chosen_answer_content").innerHTML = this.innerHTML;
-
-			var question_id_temp = document.getElementsByClassName("question")[0].id;
-			var question_id = question_id_temp.substring(0,question_id_temp.indexOf("_"));
-			var potential_answer = this.id;
-			/*
-			var time_elapsed = 3;
-			var question_timer = setInterval(function() {
-				//time_elapsed--;
-				console.log("chosen");
-				if (time_elapsed <= 0) {
-					clearInterval(question_timer);
-					validateQuestion(question_id,potential_answer);
-				}
-			}, 1000);
-			*/
-			document.getElementById("chosen_yes").onclick = function() {
-				validateQuestion(question_id,potential_answer);
-			}
-			document.getElementById("chosen_no").onclick = function() {
-				document.getElementsByClassName("chosen_container")[0].style.display="none";
-				document.getElementsByClassName("question_container")[0].classList.remove("slide-out-bottom");
-				document.getElementsByClassName("question_container")[0].className += " slide-in-bottom";
-			}
 		}
 	}
 

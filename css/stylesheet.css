@@ -145,9 +145,13 @@
 
 @-webkit-keyframes slide-in-fwd-center{0%{-webkit-transform:translateZ(-1400px);transform:translateZ(-1400px);opacity:0}100%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}}@keyframes slide-in-fwd-center{0%{-webkit-transform:translateZ(-1400px);transform:translateZ(-1400px);opacity:0}100%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}}
 
+html {
+    overflow: hidden;
+}
+
 body {
-    overflow-y:hidden;
-    letter-spacing: 1.2px;
+    overflow-y: scroll;
+    letter-spacing: 0px;
     margin:0px;
     padding:0px;
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#66aee2+1,edf0ff+80 */
@@ -156,8 +160,9 @@ body {
     /* background: -webkit-linear-gradient(top, #66aee2 1%,#edf0ff 80%); */ /* Chrome10-25,Safari5.1-6 */
     /* background: linear-gradient(to bottom, #66aee2 1%,#edf0ff 80%); */ /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66aee2', endColorstr='#edf0ff',GradientType=0 ); /* IE6-9 */
-    font-family: 'Open Sans', cursive;
+    font-family: 'Karla', sans-serif;
     cursor: default;
+    -webkit-overflow-scrolling:touch;
 }
 
 .slide-in-fwd-center{-webkit-animation:slide-in-fwd-center .4s cubic-bezier(.25,.46,.45,.94) both;animation:slide-in-fwd-center .4s cubic-bezier(.25,.46,.45,.94) both}
@@ -221,7 +226,7 @@ body {
     margin-top: 20px;
     font-size: 22px;
     width: 100%;
-    background-color: #e74c3c;
+    background-color: #2196F3;
     color: white;
     z-index: 999999999999;
     top: 45%;
@@ -234,7 +239,7 @@ body {
 .question {
     margin:0 auto;
     margin-top: 10px;
-    background-color: #e74c3c;
+    background-color: #2196F3;
     color: white;
     padding: 10px;
     width: 80%;
@@ -249,7 +254,7 @@ body {
     margin-top:10px;
     padding: 10px;
     font-size: 19px;
-    font-weight: bold;
+    /* font-weight: bold; */
     width:80%;
     border-radius: 10px;
 }
@@ -282,6 +287,7 @@ body {
 .chosen_button p {
     text-align:center;
     padding: 10px 0px 10px 0px !important;
+    margin: 10px;
 }
 
 .chosen_button_container {
@@ -440,7 +446,7 @@ body {
 
 .category_container {
     position:absolute;
-    top: 0;
+    top: 60px;
     margin:0;
     width:100%;
     height:100%;
@@ -450,7 +456,7 @@ body {
 
 .category_inner_container {
     position:relative;
-    top: 45%;
+    top: 40%;
     transform: translateY(-50%);
 }
 
@@ -477,7 +483,7 @@ body {
     font-size: 24px;
     padding: 8px 0px 8px 0px;
     /* font-weight: bold; */
-    background-color: #e74c3c;
+    background-color: #90b531;
     color: white;
 }
 
@@ -512,13 +518,38 @@ body {
     height:40% !important;
 }
 
+.create_group_container {
+    display:none;
+    margin: 0 auto;
+    /* margin-top: 18%; */
+    width: 85%;
+    padding: 5px;
+}
+
+#creategroup {
+    width:100%;
+}
+
+.create_group_container input {
+
+}
+
+.create_group_container h1 {
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 400;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
 .lobby_container {
     display:none;
 }
 
 .lobby {
     margin: 0 auto;
-    margin-top: 18%;
+    /* margin-top: 18%; */
     width: 85%;
     padding: 10px;
 }
@@ -536,8 +567,6 @@ body {
     width: 100%;
     height: 230px;
     padding: 20px 0px 20px 0px;
-    0: 10px
-    border-radius:;
     border-radius: 10px;
 }
 
@@ -548,26 +577,31 @@ body {
     margin: 0 auto;
     margin-top: 10px;
     margin-bottom: 10px;
-    background-color: #3ca8e7;
+    background-color: #2196F3;
     border-radius: 10px;
     color: white;
     text-align: center;
 }
 
 #chosen_new_group {
-    background-color:#5e9000;
+    background-color: #795f50;
     width: 100%;
 }
 
 .chosen_menu {
-    background-color:#e74c3c;
+    background-color: #90b531;
+    width: 100%;
+}
+
+.chosen_menu_group {
+    background-color: #90b531;
     width: 100%;
 }
 
 .dark_overlay {
     z-index:999;
     position: absolute;
-    top: 0;
+    top: 60px;
     margin: 0;
     width: 100%;
     height: 100%;
@@ -576,7 +610,7 @@ body {
 
 .new_user_prompt {
     margin: 0 auto;
-    margin-top: 180px;
+    margin-top: 160px;
     text-align: center;
     width: 75%;
 }
@@ -586,21 +620,40 @@ body {
 }
 
 .logo_container {
-    background-color:white;
+    background-color: rgba(255, 255, 255, 0.86);
     width:100%;
+    position: absolute;
+    z-index: 9999;
 }
 
 .test_logo {
-    padding: 10px 10px 2px 15px;
-    width: 90%;
+    padding: 10px;
+    margin: 0 auto;
+    display: block;
+    max-width: 90%;
+    height: 40px;
     z-index:999;
 }
 
-.new_user_prompt input {
-    height: 43px;
+.new_user_prompt_container {
+    display:none;
+}
+
+.categories_group_selection_container {
+    background-color: rgba(255, 255, 255, 0.13);
+    display: inline-block;
+    overflow: auto;
+    width: 100%;
+    height: 100px;
+    padding: 20px 0px 20px 0px;
+    border-radius: 10px;
+}
+
+input {
+    height: 40px;
     width: 100%;
     text-align: center;
-    font-size: 22px;
+    font-size: 18px;
     border-radius: 10px;
     margin: 0px;
     padding: 0px;
@@ -608,7 +661,7 @@ body {
 }
 
 #chosen_username {
-    background-color:#5e9000;
+    background-color: #2196F3;
     width:100%;
 }
 

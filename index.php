@@ -11,7 +11,7 @@
         <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
         <meta http-equiv="pragma" content="no-cache" />
 
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet">
         <link rel="stylesheet" href="assets/icons/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/stylesheet.css">
         <script type="text/javascript" src="script/engine/three.min.js"></script>
@@ -20,11 +20,25 @@
     <body>
         <div class="main_content">
             <div class="dark_overlay lobby_container">
+                <div class="create_group_container">
+                    <h1>Hoe wil je de groep noemen?</h1>
+                    <input id="groupname" type="text">
+                    <h1>Voer een wachtwoord in om de eindresultaten op te halen.</h1>
+                    <input id="groupcode" type="text">
+                    <h1>Uit welke categorien moeten er vragen komen?</h1>
+                    <div class="categories_group_selection_container">
+
+                    </div>
+                    <div class="chosen_button" id="creategroup">
+                        <p>Groep aanmaken</p>
+                    </div>
+                    <div class="chosen_button chosen_menu_group">
+                        <p>Terug naar menu</p>
+                    </div>
+                </div>
                 <div class="lobby">
                     <h1>In welke groep zit je?</h1>
                     <div class="lobby_item_list">
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
                         <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
                     </div>
                     <div class="chosen_button" id="chosen_new_group">
@@ -60,7 +74,7 @@
                             <p>Doorgaan</p>
                         </div>
                         <div class="chosen_button" id="chosen_no">
-                            <p>Andere kiezen..</p>
+                            <p>Anders</p>
                         </div>
                     </div>
                 </div>
@@ -76,7 +90,7 @@
             <div class="main_menu_container slide-in-bottom">
                 <div class="main_menu_item flip-in-hor-bottom" id="group">Groep</div>
                 <div class="main_menu_item flip-in-hor-bottom" id="alone">Alleen</div>
-                <div class="main_menu_item flip-in-hor-bottom" id="expl">Hoe werkt deze game?</div>
+                <div class="main_menu_item flip-in-hor-bottom" id="expl">Uitleg</div>
             </div>
             <div class="overlay correct">Goed!</div>
             <div class="overlay not_correct">Fout!</div>
