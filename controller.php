@@ -6,8 +6,14 @@
     if (isset($_GET['function'])) {
         if ($_GET['function'] == "validate") {
             validateAnswer();
+        } else if ($_GET['function'] == "getCatsGroup") {
+            getCategories();
+        } else if ($_GET['function'] == "getGroups") {
+            getGroups();
         } else if ($_GET['function'] == "getQandA") {
             getQuestionAndAnswers();
+        } else if ($_GET['function'] == "createGroup") {
+            createGroup();
         } else if ($_GET['function'] == "getUserProgress") {
             if(isset($_SESSION['user_id'])) {
                 getUserProgress();
@@ -17,6 +23,29 @@
         } else if ($_GET['function'] == "newUser") {
             createUser();
         }
+    }
+
+    function getGroups() {
+        $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
+        if($result_answer = $mysqli->query("SELECT * FROM groups")) {
+            $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+            for ($i = 0; $i < $result_answer->num_rows; $i++) {
+                echo $row[$i]["id"]."=".$row[$i]["group_name"]."|";
+            }
+        }
+        mysqli_close($mysqli);
+    }
+
+
+    function getCategories() {
+        $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
+        if($result_answer = $mysqli->query("SELECT * FROM categories")) {
+            $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+            for ($i = 0; $i < $result_answer->num_rows; $i++) {
+                echo $row[$i]["id"]."=".$row[$i]["category_name"]."|";
+            }
+        }
+        mysqli_close($mysqli);
     }
 
     function getUserProgress() {
@@ -32,9 +61,24 @@
         mysqli_close($mysqli);
     }
 
+    function createGroup() {
+        $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
+        $group_name = $mysqli->real_escape_string($_GET['group_name']);
+        $group_code = $mysqli->real_escape_string($_GET['group_code']);
+        $categories = $mysqli->real_escape_string($_GET['categories']);
+        $categories = json_encode($categories);
+        $current_date = json_encode(date('Y-m-d'));
+        //echo $current_date;
+        if ($mysqli->query("INSERT INTO groups (code, group_name, time_created, categories) VALUES ('$group_code', '$group_name', '$current_date', '$categories')")) {
+            echo $mysqli->insert_id;
+        } else {
+            echo mysqli_error($mysqli);
+        }
+        mysqli_close($mysqli);
+    }
+
     function validateUser() {
         $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
-
         mysqli_close($mysqli);
     }
 

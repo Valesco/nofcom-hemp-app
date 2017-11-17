@@ -63,9 +63,6 @@ function init() {
 		mill = collada.scene;
 	});
 
-	//loader.load( 'assets/models/restaurant.dae', function ( collada ) {
-		//restaurant = collada.scene;
-	//});
 	var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.85 );
 	scene.add( ambientLight );
 
@@ -73,7 +70,7 @@ function init() {
 	light.position.set( 20, 75, 50 );
 	scene.add( light );
 
-	renderer = new THREE.WebGLRenderer({alpha:true});
+	renderer = new THREE.WebGLRenderer({ alpha:true });
 	renderer.setPixelRatio( window.devicePixelRatio*0.75 );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 

@@ -19,15 +19,45 @@
     </head>
     <body>
         <div class="main_content">
+            <div class="dark_overlay multiplayer_lobby_container">
+                <div class="multiplayer_lobby_inner_container">
+                    <h1>Wachten tot iedereen in de groep zit</h1>
+                    <div class="multiplayer_name_list">
+                        <p>Pietsje</p>
+                        <p>Kees</p>
+                        <p>Henk</p>
+                        <p>Rinke</p>
+                        <p>Augurk</p>
+                        <p>Pollen</p>
+                        <p>Lenovo</p>
+                        <p>Sjek</p>
+                        <p>Swiere</p>
+                        <p>Pietsje</p>
+                        <p>Kees</p>
+                        <p>Henk</p>
+                        <p>Rinke</p>
+                        <p>Augurk</p>
+                        <p>Pollen</p>
+                        <p>Lenovo</p>
+                        <p>Sjek</p>
+                        <p>Swiere</p>
+                    </div>
+                    <div class="chosen_button chosen_menu_group">
+                        <p>Terug naar menu</p>
+                    </div>
+                </div>
+            </div>
             <div class="dark_overlay lobby_container">
                 <div class="create_group_container">
                     <h1>Hoe wil je de groep noemen?</h1>
                     <input id="groupname" type="text">
                     <h1>Voer een wachtwoord in om de eindresultaten op te halen.</h1>
                     <input id="groupcode" type="text">
-                    <h1>Uit welke categorien moeten er vragen komen?</h1>
+                    <h1>Van welke categorien moeten er vragen komen?</h1>
                     <div class="categories_group_selection_container">
+                        <div class="categories_group_selection_item_container">
 
+                        </div>
                     </div>
                     <div class="chosen_button" id="creategroup">
                         <p>Groep aanmaken</p>
@@ -39,7 +69,7 @@
                 <div class="lobby">
                     <h1>In welke groep zit je?</h1>
                     <div class="lobby_item_list">
-                        <div class="lobby_item" id="lobby_0">Testgroepsnaam</div>
+
                     </div>
                     <div class="chosen_button" id="chosen_new_group">
                         <p>Nieuwe groep aanmaken</p>
@@ -84,7 +114,7 @@
                 <h1 class="vibrate-1" id="debug"></h1>
             </div>
             <div class="logo_container">
-                <img src="assets/img/logo.png" class="test_logo">
+                <img src="" class="test_logo">
             </div>
             <div id="container"></div>
             <div class="main_menu_container slide-in-bottom">

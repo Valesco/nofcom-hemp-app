@@ -2,6 +2,7 @@ window.onload = function() {
 	var questions_answered = [];
 	var total_categories = [];
 	var total_categories_used = [];
+	var category_items;
 	var current_randomized_category;
 	var current_category_id = Math.floor(Math.random() * 1) + 0;
 	var username = readCookie('name');
@@ -55,6 +56,8 @@ window.onload = function() {
 	}
 
 	document.getElementById("group").onclick = function() {
+		document.getElementsByClassName("main_menu_container")[0].style.display="none";
+		document.getElementsByClassName("lobby_container")[0].style.display="block";
 		getGroups();
 	}
 
@@ -66,11 +69,17 @@ window.onload = function() {
 	document.getElementById("chosen_new_group").onclick = function() {
 		document.getElementsByClassName("lobby")[0].style.display="none";
 		document.getElementsByClassName("create_group_container")[0].style.display="block";
+		fillGroupCategoriesContent();
 	}
 
-	document.getElementsByClassName("chosen_menu_group")[0].onclick = function() {
-		document.getElementsByClassName("lobby")[0].style.display="block";
-		document.getElementsByClassName("create_group_container")[0].style.display="none";
+	for(var i = 0; i < document.getElementsByClassName("chosen_menu_group").length; i++) {
+		document.getElementsByClassName("chosen_menu_group")[i].onclick = function() {
+			document.getElementsByClassName("lobby_container")[0].style.display="block";
+			document.getElementsByClassName("create_group_container")[0].style.display="none";
+			document.getElementsByClassName("multiplayer_lobby_container")[0].style.display="none";
+			document.getElementsByClassName("lobby")[0].style.display="block";
+			getGroups();
+		}
 	}
 
 	for(var i = 0; i < 3; i++) {
@@ -82,6 +91,43 @@ window.onload = function() {
 			document.getElementsByClassName("lobby_container")[0].style.display="none";
 			document.getElementsByClassName("about_container")[0].style.display="none";
             document.getElementsByClassName("final_score_container")[0].style.display="none";
+		}
+	}
+
+
+	document.getElementById("creategroup").onclick = function() {
+		var group_name = document.getElementById("groupname").value;
+		var group_code = document.getElementById("groupcode").value;
+		var categories_selected = [];
+
+		if(group_name.length > 1 && group_code.length > 1) {
+			document.getElementById("groupname").style.border = "none";
+			document.getElementById("groupcode").style.border = "none";
+			for (var i = 0; i < category_items.length-1; i++) {
+				if(document.getElementById("categories_group_check_"+i).checked) {
+					categories_selected.push(i);
+				}
+			}
+			console.log(group_name,group_code,categories_selected);
+			var httpRequest = new XMLHttpRequest();
+			if(!httpRequest) return false;
+			httpRequest.onreadystatechange = validate;
+			httpRequest.open('GET','controller.php?function=createGroup&group_name='+group_name+'&group_code='+group_code+'&categories='+categories_selected);
+			httpRequest.send();
+			function validate() {
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					if (httpRequest.status === 200) {
+						answer_return = httpRequest.responseText;
+						console.log(answer_return);
+					} else {
+						answer_return = 'There was a problem with the request.';
+					}
+				}
+			}
+		} else if (group_name.length <= 1) {
+			document.getElementById("groupname").style.border = "2px solid #b70000";
+		} else if (group_code.length <= 1) {
+			document.getElementById("groupcode").style.border = "2px solid #b70000";
 		}
 	}
 
@@ -106,9 +152,45 @@ window.onload = function() {
 	}
 
 	function getGroups() {
-		document.getElementsByClassName("main_menu_container")[0].style.display="none";
-		document.getElementsByClassName("lobby_container")[0].style.display="block";
+		console.log(document.getElementsByClassName("lobby_item"));
+		document.getElementsByClassName("lobby_item_list")[0].innerHTML = "";
 		console.log("Loading groups");
+		var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=getGroups');
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					var group_items = answer_return.split("|");
+					for(var i = 0; i < group_items.length-1; i++) {
+						if (group_items[i] != "") {
+							var group_id = group_items[i].split("=")[0];
+							var group = group_items[i].split("=")[1];
+							document.getElementsByClassName("lobby_item_list")[0].innerHTML += '<div class="lobby_item" id="lobby_'+group_id+'">'+group+'</div>';
+						}
+					}
+					for(var i = 0; i < document.getElementsByClassName("lobby_item").length; i++) {
+						document.getElementsByClassName("lobby_item")[i].onclick = function() {
+							var id = this.id.split("_")[1];
+							joinGroup(id);
+						}
+					}
+				} else {
+					answer_return = 'There was a problem with the request.';
+				}
+			}
+		}
+	}
+
+	function joinGroup(id) {
+		console.log(id);
+		document.getElementsByClassName("main_menu_container")[0].style.display="none";
+		document.getElementsByClassName("lobby_container")[0].style.display="none";
+		document.getElementsByClassName("multiplayer_lobby_container")[0].style.display="block";
 	}
 
 	function emptyQuestionAnswers() {
@@ -269,6 +351,39 @@ window.onload = function() {
 		console.log("end game");
 		showFinalScoreGroup();
 		//location.reload(-1);
+	}
+
+	function fillGroupCategoriesContent() {
+		console.log("load group cats");
+		document.getElementsByClassName("categories_group_selection_container")[0].innerHTML = "";
+
+		var answer_return, httpRequest;
+		httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=getCatsGroup');
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					category_items = answer_return.split("|");
+					for(var i = 0; i < category_items.length-1; i++) {
+						if (category_items[i] != "") {
+							console.log();
+							var category_id = category_items[i].split("=")[0];
+							var category = category_items[i].split("=")[1];
+							document.getElementsByClassName("categories_group_selection_container")[0].innerHTML += '<div class="categories_group_selection_item"><input type="checkbox" id="categories_group_check_'+category_id+'" checked><p id="categories_group_'+category_id+'">'+category+'</p></div>';
+						}
+					}
+					//alertContents(answer_return);
+				} else {
+					answer_return = 'There was a problem with the request.';
+					//alertContents(answer_return);
+				}
+			}
+		}
 	}
 
 	/*
