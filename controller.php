@@ -20,9 +20,52 @@
             } else {
                 echo "new_user";
             }
-        } else if ($_GET['function'] == "newUser") {
+        } else if ($_GET['function'] == "createUser") {
             createUser();
+        } else if ($_GET['function'] == "joinGroup") {
+            joinGroup();
+        } else if ($_GET['function'] == "getUsers") {
+            getUsers();
         }
+    }
+
+    function getUsers() {
+        $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
+        $group_id = $mysqli->real_escape_string($_GET['group_id']);
+
+        if($result_answer = $mysqli->query("SELECT * FROM users INNER JOIN scores ON users.session_token = scores.user_token AND scores.group_id = '$group_id'")) {
+            $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+            for ($i = 0; $i < $result_answer->num_rows; $i++) {
+                echo $row[$i]["id"]."=".$row[$i]["user_name"]."|";
+            }
+        } else {
+            echo mysqli_error($mysqli);
+        }
+
+        mysqli_close($mysqli);
+    }
+
+    function joinGroup() {
+        $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
+        $token = $mysqli->real_escape_string($_GET['token']);
+        $group_id = $mysqli->real_escape_string($_GET['group_id']);
+        if ($result_answer = $mysqli->query("SELECT user_token FROM scores WHERE user_token = '$token' AND group_id = '$group_id'")) {
+            if($result_answer->num_rows == 0) {
+                $mysqli->query("INSERT INTO scores (user_token, group_id, score, progression) VALUES ('$token', '$group_id', '0', '')");
+            }
+            if ($result = $mysqli->query("SELECT group_admin FROM groups WHERE id = '$group_id' AND group_admin = '$token'")) {
+                if ((string)$result->fetch_row()[0] == (string)$token) {
+                    echo "admin";
+                } else {
+                    echo "user";
+                }
+            } else {
+                echo mysqli_error($mysqli);
+            }
+        } else {
+            echo mysqli_error($mysqli);
+        }
+        mysqli_close($mysqli);
     }
 
     function getGroups() {
@@ -55,9 +98,11 @@
 
     function createUser() {
         $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
-        $user_name = $mysqli->real_escape_string($_GET['username']);
-        $query = "INSERT INTO users (user_name, group_id, 0, time_created) VALUES ()";
-        $_SESSION["user_id"] = 0;
+        $user_name = $mysqli->real_escape_string($_GET['user_name']);
+        $age = $mysqli->real_escape_string($_GET['age']);
+        $token = uniqid(rand());
+        $mysqli->query("INSERT INTO `users`(`user_name`, `age`, `session_token`) VALUES ('$user_name','$age','$token')");
+        echo $token;
         mysqli_close($mysqli);
     }
 
@@ -65,11 +110,12 @@
         $mysqli = new mysqli("localhost", "root", "", "hemp_app_db");
         $group_name = $mysqli->real_escape_string($_GET['group_name']);
         $group_code = $mysqli->real_escape_string($_GET['group_code']);
+        $group_admin = $mysqli->real_escape_string($_GET['group_admin']);
         $categories = $mysqli->real_escape_string($_GET['categories']);
         $categories = json_encode($categories);
         $current_date = json_encode(date('Y-m-d'));
         //echo $current_date;
-        if ($mysqli->query("INSERT INTO groups (code, group_name, time_created, categories) VALUES ('$group_code', '$group_name', '$current_date', '$categories')")) {
+        if ($mysqli->query("INSERT INTO groups (code, group_name, time_created, categories, started, group_admin) VALUES ('$group_code', '$group_name', '$current_date', '$categories', 0, '$group_admin')")) {
             echo $mysqli->insert_id;
         } else {
             echo mysqli_error($mysqli);

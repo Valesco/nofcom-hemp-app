@@ -260,7 +260,7 @@ body {
 }
 
 .chosen_button {
-    cursor:pointer;
+    cursor: pointer;
     background-color: #3ca8e7;
     color: white;
     border: none;
@@ -706,6 +706,17 @@ body {
     padding-left: 25px;
 }
 
+#play {
+    width:100%;
+    display:none;
+}
+
+#groupnametitle {
+    font-size: 24px;
+    margin: 0;
+    color: #90b531;
+}
+
 .multiplayer_lobby_container {
     display:none;
 }
@@ -722,6 +733,7 @@ input {
 }
 
 #chosen_username {
+    cursor:pointer;
     background-color: #2196F3;
     width:100%;
 }

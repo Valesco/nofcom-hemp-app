@@ -1,3 +1,8 @@
+window.onerror=function(msg, url, linenumber){
+	alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
+	return true;
+}
+
 window.onload = function() {
 	var questions_answered = [];
 	var total_categories = [];
@@ -8,30 +13,19 @@ window.onload = function() {
 	var username = readCookie('name');
 	checkUsername(username,"check");
 
-	function toggleFullScreen() {
-		var doc = window.document;
-		var docEl = doc.documentElement;
-
-		var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-		var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-		if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-			requestFullScreen.call(docEl);
-		} else {
-			cancelFullScreen.call(doc);
-		}
+	function reverseChildNodes(node) {
+		var parentNode = node.parentNode, nextSibling = node.nextSibling,
+		    frag = node.ownerDocument.createDocumentFragment();
+		parentNode.removeChild(node);
+		while(node.lastChild)
+		    frag.appendChild(node.lastChild);
+		node.appendChild(frag);
+		parentNode.insertBefore(node, nextSibling);
+		return node;
 	}
 
-	toggleFullScreen();
-
-	function createCookie(name,value,days) {
-		var expires = "";
-		if (days) {
-			var date = new Date();
-			date.setTime(date.getTime() + (days*24*60*60*1000));
-			expires = "; expires=" + date.toUTCString();
-			}
-		document.cookie = name + "=" + value + expires + "; path=/";
+	function createCookie(name,value,age) {
+		document.cookie = name + "=" + value +"; age="+ age + "; path=/";
 	}
 
 	function readCookie(name) {
@@ -72,8 +66,14 @@ window.onload = function() {
 		fillGroupCategoriesContent();
 	}
 
+	document.getElementById("exit_group").onclick = function() {
+		exitGroup();
+	}
+
 	for(var i = 0; i < document.getElementsByClassName("chosen_menu_group").length; i++) {
 		document.getElementsByClassName("chosen_menu_group")[i].onclick = function() {
+			getNewUserInterval = 0;
+			exitGroup();
 			document.getElementsByClassName("lobby_container")[0].style.display="block";
 			document.getElementsByClassName("create_group_container")[0].style.display="none";
 			document.getElementsByClassName("multiplayer_lobby_container")[0].style.display="none";
@@ -84,6 +84,7 @@ window.onload = function() {
 
 	for(var i = 0; i < 3; i++) {
 		document.getElementsByClassName("chosen_menu")[i].onclick = function() {
+			getNewUserInterval = 0;
 			document.getElementsByClassName("main_menu_container")[0].style.display="block";
 			document.getElementsByClassName("category_container")[0].style.display="none";
 			document.getElementsByClassName("question_container")[0].style.display="none";
@@ -93,7 +94,6 @@ window.onload = function() {
             document.getElementsByClassName("final_score_container")[0].style.display="none";
 		}
 	}
-
 
 	document.getElementById("creategroup").onclick = function() {
 		var group_name = document.getElementById("groupname").value;
@@ -112,13 +112,18 @@ window.onload = function() {
 			var httpRequest = new XMLHttpRequest();
 			if(!httpRequest) return false;
 			httpRequest.onreadystatechange = validate;
-			httpRequest.open('GET','controller.php?function=createGroup&group_name='+group_name+'&group_code='+group_code+'&categories='+categories_selected);
+			httpRequest.open('GET','controller.php?function=createGroup&group_name='+group_name+'&group_code='+group_code+'&categories='+categories_selected+'&group_admin='+readCookie('token'));
 			httpRequest.send();
 			function validate() {
 				if (httpRequest.readyState === XMLHttpRequest.DONE) {
 					if (httpRequest.status === 200) {
 						answer_return = httpRequest.responseText;
 						console.log(answer_return);
+						document.getElementsByClassName("lobby_container")[0].style.display="block";
+						document.getElementsByClassName("create_group_container")[0].style.display="none";
+						document.getElementsByClassName("multiplayer_lobby_container")[0].style.display="none";
+						document.getElementsByClassName("lobby")[0].style.display="block";
+						getGroups();
 					} else {
 						answer_return = 'There was a problem with the request.';
 					}
@@ -151,6 +156,8 @@ window.onload = function() {
 		document.getElementsByClassName("question_container")[0].style.display="none";
 	}
 
+	var getNewUserInterval = 0;
+
 	function getGroups() {
 		console.log(document.getElementsByClassName("lobby_item"));
 		document.getElementsByClassName("lobby_item_list")[0].innerHTML = "";
@@ -176,9 +183,13 @@ window.onload = function() {
 					for(var i = 0; i < document.getElementsByClassName("lobby_item").length; i++) {
 						document.getElementsByClassName("lobby_item")[i].onclick = function() {
 							var id = this.id.split("_")[1];
+							getNewUserInterval = 1;
+							document.getElementById("groupnametitle").innerHTML = this.innerHTML;
 							joinGroup(id);
+							getGroupUsers(id);
 						}
 					}
+					reverseChildNodes(document.getElementsByClassName('lobby_item_list')[0]);
 				} else {
 					answer_return = 'There was a problem with the request.';
 				}
@@ -186,11 +197,90 @@ window.onload = function() {
 		}
 	}
 
+	var delay = ( function() {
+		var timer = 0;
+		return function(callback, ms) {
+			clearTimeout (timer);
+			timer = setTimeout(callback, ms);
+		};
+	})();
+
+	function getGroupUsers(id) {
+		if (getNewUserInterval == 1) {
+			var httpRequest = new XMLHttpRequest();
+			if(!httpRequest) return false;
+			httpRequest.onreadystatechange = validate;
+			httpRequest.open('GET','controller.php?function=getUsers&group_id='+id);
+			httpRequest.send();
+
+			//console.log("Request started.");
+
+			function validate() {
+				if (httpRequest.readyState === XMLHttpRequest.DONE) {
+					if (httpRequest.status === 200) {
+						document.getElementsByClassName("multiplayer_name_list")[0].innerHTML = "";
+						answer_return = httpRequest.responseText;
+						var users = answer_return.split("|");
+						for(var i = 0; i < users.length-1; i++) {
+							if (users[i] != "") {
+								var user_id = users[i].split("=")[0];
+								var user = users[i].split("=")[1];
+								document.getElementsByClassName("multiplayer_name_list")[0].innerHTML += '<p>'+user+'</p>';
+							}
+						}
+						//console.log(answer_return);
+						//console.log("Request finished.");
+						delay(function(){
+							getGroupUsers(id);
+						}, 1000 );
+					} else {
+						answer_return = 'There was a problem with the request.';
+					}
+				}
+			}
+		}
+	}
+
+	var inGroup = 0;
 	function joinGroup(id) {
-		console.log(id);
+		inGroup = 1;
+		console.log("Joining group "+id);
+		document.getElementById("play").style.display="none";
 		document.getElementsByClassName("main_menu_container")[0].style.display="none";
 		document.getElementsByClassName("lobby_container")[0].style.display="none";
 		document.getElementsByClassName("multiplayer_lobby_container")[0].style.display="block";
+		var token = readCookie('token');
+		var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=joinGroup&token='+token+'&group_id='+id);
+		httpRequest.send();
+
+		console.log("Adding user.");
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					console.log("User added. ");
+					answer_return = httpRequest.responseText;
+					if (answer_return == "admin") {
+						console.log("show play button!");
+						document.getElementById("play").style.display="block";
+					} else {
+						document.getElementById("play").style.display="none";
+					}
+					console.log(answer_return);
+				} else {
+					answer_return = 'There was a problem with the request.';
+				}
+			}
+		}
+	}
+
+	function exitGroup() {
+		if (inGroup == 1) {
+			console.log("Exiting group.");
+		}
 	}
 
 	function emptyQuestionAnswers() {
@@ -244,7 +334,28 @@ window.onload = function() {
 		} else {
 			if (temp_name != "" || temp_name != null || temp_name.length > 1) {
 				console.log(temp_name);
-				createCookie('name',temp_name,7);
+				createUser(temp_name,7);
+			}
+		}
+	}
+
+	function createUser(temp_name,age) {
+		var httpRequest;
+		httpRequest = new XMLHttpRequest();
+		if (!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?user_name='+temp_name+'&age='+age+'&function=createUser');
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					createCookie('name',temp_name,age);
+					createCookie('token',answer_return,0);
+				} else {
+					answer_return = 'There was a problem with the request.';
+				}
 			}
 		}
 	}

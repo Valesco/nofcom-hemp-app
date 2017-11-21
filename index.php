@@ -21,28 +21,15 @@
         <div class="main_content">
             <div class="dark_overlay multiplayer_lobby_container">
                 <div class="multiplayer_lobby_inner_container">
+                    <h1 id="groupnametitle">Wachten tot iedereen in de groep zit</h1>
                     <h1>Wachten tot iedereen in de groep zit</h1>
                     <div class="multiplayer_name_list">
-                        <p>Pietsje</p>
-                        <p>Kees</p>
-                        <p>Henk</p>
-                        <p>Rinke</p>
-                        <p>Augurk</p>
-                        <p>Pollen</p>
-                        <p>Lenovo</p>
-                        <p>Sjek</p>
-                        <p>Swiere</p>
-                        <p>Pietsje</p>
-                        <p>Kees</p>
-                        <p>Henk</p>
-                        <p>Rinke</p>
-                        <p>Augurk</p>
-                        <p>Pollen</p>
-                        <p>Lenovo</p>
-                        <p>Sjek</p>
-                        <p>Swiere</p>
+
                     </div>
-                    <div class="chosen_button chosen_menu_group">
+                    <div class="chosen_button" id="play">
+                        <p>Play</p>
+                    </div>
+                    <div class="chosen_button chosen_menu_group" id="exit_group">
                         <p>Terug naar menu</p>
                     </div>
                 </div>
