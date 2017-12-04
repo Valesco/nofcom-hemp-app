@@ -32,6 +32,7 @@ function init() {
         blades.position.x = -9.5;
 		blades.position.z = -7.5;
 		blades.position.y = 12.6;
+
 	});
 	loadingManager.onProgress = function(item, loaded, total) {
 		var loading_progress = loaded / total * 100;

@@ -146,23 +146,19 @@
 @-webkit-keyframes slide-in-fwd-center{0%{-webkit-transform:translateZ(-1400px);transform:translateZ(-1400px);opacity:0}100%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}}@keyframes slide-in-fwd-center{0%{-webkit-transform:translateZ(-1400px);transform:translateZ(-1400px);opacity:0}100%{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}}
 
 html {
-    overflow: hidden;
+
 }
 
 body {
     overflow-y: scroll;
     letter-spacing: 0px;
-    margin:0px;
+    margin: 0 auto;
+    margin-top: 0px;
+    display: block;
     padding:0px;
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#66aee2+1,edf0ff+80 */
-    /* background: #66aee2; */ /* Old browsers */
-    background: -moz-linear-gradient(top, #66aee2 1%, #edf0ff 80%); /* FF3.6-15 */
-    /* background: -webkit-linear-gradient(top, #66aee2 1%,#edf0ff 80%); */ /* Chrome10-25,Safari5.1-6 */
-    /* background: linear-gradient(to bottom, #66aee2 1%,#edf0ff 80%); */ /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66aee2', endColorstr='#edf0ff',GradientType=0 ); /* IE6-9 */
+    background-color: #4a4a4a;
     font-family: 'Karla', sans-serif;
     cursor: default;
-    -webkit-overflow-scrolling:touch;
 }
 
 .slide-in-fwd-center{-webkit-animation:slide-in-fwd-center .4s cubic-bezier(.25,.46,.45,.94) both;animation:slide-in-fwd-center .4s cubic-bezier(.25,.46,.45,.94) both}
@@ -203,9 +199,10 @@ body {
     display:none;
 }
 
-.final_score_container .chosen_menu {
-    bottom: 30px;
-    /* width: 80%; */
+.final_score_container #reload {
+    bottom: 40px;
+    width: 75%;
+    background-color: #90b531;
     /* margin: 0 auto; */
     position: absolute;
 }
@@ -222,18 +219,44 @@ body {
 
 .pos_score {
     position: absolute;
-    margin:0 auto;
-    margin-top: 20px;
+    /* margin:0 auto; */
+    /* margin-top: 20px; */
+    /* margin-right: 27px; */
     font-size: 22px;
+    height: 50%;
     width: 100%;
-    background-color: #2196F3;
+    background-color: #259fff8c;
     color: white;
     z-index: 999999999999;
-    top: 45%;
+    top: 80px;
     text-align: center;
     font-weight: bold;
-    font-size: 28px;
-    padding: 10px 0px 10px;
+    font-size: 16px;
+    display: inline-block;
+    padding: 5px 0px 5px 0px;
+}
+
+.pos_score h3 {
+    margin: 0 auto;
+    width: 80%;
+    padding: 10px 0px 10px 0px;
+    border-bottom: 2px solid #efefefbf;
+}
+
+.inner_pos_score {
+    position: relative;
+    top: 45%;
+    max-height: 70%;
+    margin: 0 auto;
+    width: 85%;
+    /* display: inline-block; */
+    overflow-y: scroll;
+    transform: translateY(-55%);
+}
+
+.inner_pos_score div {
+    margin:10px;
+    display: block;
 }
 
 .question {
@@ -288,6 +311,7 @@ body {
     text-align:center;
     padding: 10px 0px 10px 0px !important;
     margin: 10px;
+    font-size: 20px;
 }
 
 .chosen_button_container {
@@ -418,17 +442,17 @@ body {
 }
 
 #group {
-    background-color:#2196F3;
+    background-color: #1a89bb;
     color:white;
 }
 
 #alone {
-    background-color: #795f50;
+    background-color: #905c28;
     color:white;
 }
 
 #expl {
-    background-color: #90b531;
+    background-color: #0e793f;
     color:white;
 }
 
@@ -534,6 +558,15 @@ body {
 
 }
 
+.create_group_container h4 {
+    color: white;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 400;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
 .create_group_container h1 {
     color: white;
     font-size: 17px;
@@ -622,13 +655,22 @@ body {
 }
 
 .multiplayer_name_list p {
-    /* width:100%; */
+    float:left;
+    width:90%;
     color: white;
-    float: left;
     min-width: 60px;
-    /* text-align: center; */
+    text-align: center;
     padding: 0px;
-    margin: 5px 10px 0px 10px;
+    margin: 18px 0px 0px 0px;
+}
+
+.kick {
+    float:left;
+    width:10%;
+    color:#d20000;
+    font-weight:bold;
+    font-size:22px;
+    margin-top:13px;
 }
 
 .dark_overlay {
@@ -637,19 +679,22 @@ body {
     top: 60px;
     margin: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
+    /* height: 100%; */
     background-color: rgba(51, 51, 51, 0.95);
 }
 
 .new_user_prompt {
     margin: 0 auto;
-    margin-top: 160px;
+    margin-top: 25px;
     text-align: center;
     width: 75%;
 }
 
 .new_user_prompt h1 {
     color:white;
+    margin: 10px;
+    font-size: 18px;
 }
 
 .logo_container {
@@ -669,14 +714,67 @@ body {
     z-index:999;
 }
 
-.new_user_prompt_container {
-    display:none;
+.pre_new_user_prompt {
+    margin:0 auto;
+    margin-top:60px;
+    width: 80%;
+    text-align: center;
+    color:white;
+}
+
+#user_chosen_yes {
+    float:left;
+    background-color: #5e9000;
+}
+
+#user_chosen_no {
+    float:right;
+    background-color: #e74c3c;
+}
+
+.age_input {
+    width: 70px;
+}
+
+.users_group_selection_container {
+    background-color: rgba(255, 255, 255, 0.13);
+    display: inline-block;
+    overflow: auto;
+    overflow-x: hidden;
+    width: 100%;
+    height: 120px;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.user_group_selection_item_container {
+    width:100%;
+}
+
+.user_group_selection_item {
+    width: 100%;
+    padding: 5px;
+}
+
+.users_group_selection_container input {
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.users_group_selection_container p {
+    color:white;
+    margin: 0px;
+    padding-left: 25px;
 }
 
 .categories_group_selection_container {
     background-color: rgba(255, 255, 255, 0.13);
     display: inline-block;
     overflow: auto;
+    overflow-x: hidden;
     width: 100%;
     height: 120px;
     padding: 5px;
@@ -728,8 +826,19 @@ input {
     font-size: 18px;
     border-radius: 10px;
     margin: 0px;
+    margin-bottom: 10px;
     padding: 0px;
     border: none;
+}
+
+.sub_final_score_container {
+    margin:0 auto;
+    display:block;
+    width: 75%;
+}
+
+#betweenname {
+    width:50%;
 }
 
 #chosen_username {
