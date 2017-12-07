@@ -18,11 +18,19 @@
         <script type="text/javascript" src="script/engine/ColladaLoader2.js"></script>
     </head>
     <body>
+        <div class="prompt_overlay">
+            <div class="prompt_overlay_inner">
+                <h1 id="prompt_text">Helloo</h1>
+                <div id="prompt_button">
+                    <p>Doorgaan</p>
+                </div>
+            </div>
+        </div>
         <div class="super_main_content">
             <div class="main_content">
                 <div class="dark_overlay multiplayer_lobby_container">
                     <div class="multiplayer_lobby_inner_container">
-                        <h1 id="groupnametitle">Wachten tot iedereen in de groep zit</h1>
+                        <h1 id="groupnametitle">Groepsnaam aan het laden..</h1>
                         <h1>Wachten tot iedereen in de groep zit</h1>
                         <div class="multiplayer_name_list">
 
@@ -59,25 +67,32 @@
                             <p>Groep aanmaken</p>
                         </div>
                         <div class="chosen_button chosen_menu_group">
-                            <p>Terug naar menu</p>
+                            <p>Terug naar lobby</p>
                         </div>
                     </div>
                     <div class="lobby">
-                        <h1>De wachtkamer</h1>
+                        <h1>Lobby</h1>
+                        <h3>Je wordt door de groepsleider in een groep ingedeeld. De groep zie je automatisch in beeld verschijnen.</h3>
+                        <div class="lobby_item_list">
+
+                        </div>
+                        <h3 id="username_show"></h3>
+                    </div>
+                    <div class="lobby_admin">
+                        <h1>Lobby</h1>
+                        <h3>Je aangemaakte groepen:</h3>
                         <div class="lobby_item_list">
 
                         </div>
                         <div class="chosen_button" id="chosen_new_group">
                             <p>Nieuwe groep aanmaken</p>
                         </div>
-                        <div class="chosen_button chosen_menu">
-                            <p>Terug naar menu</p>
-                        </div>
                     </div>
                 </div>
                 <div class="dark_overlay pre_new_user_prompt_container">
                     <div class="pre_new_user_prompt">
-                        <h1>Ben je groepsleider?</h1>
+                        <h1 id="pre_new_user_prompt_text"></h1>
+                        <h1>Ben je een beheerder?</h1>
                         <div class="chosen_button_container">
                             <div class="chosen_button" id="user_chosen_yes">
                                 <p>Ja</p>
@@ -134,17 +149,50 @@
                     <h1 class="vibrate-1" id="debug"></h1>
                 </div>
                 <div class="logo_container">
-                    <img src="assets/img/logo_3.png" class="test_logo">
+                    <img src="assets/img/logo_1.png" class="test_logo" id="logo_1">
+                    <img src="assets/img/logo_2.png" class="test_logo" id="logo_2">
+                    <img src="assets/img/logo_3.png" class="test_logo" id="logo_3">
                 </div>
                 <div id="container"></div>
-                <div class="main_menu_container slide-in-bottom">
-                    <div class="main_menu_item flip-in-hor-bottom" id="group">Groep</div>
-                    <div class="main_menu_item flip-in-hor-bottom" id="alone">Alleen</div>
-                    <div class="main_menu_item flip-in-hor-bottom" id="expl">Uitleg</div>
+                <div class="main_menu_container slide-in-bottom" id="start_menu">
+                    <div class="main_menu_item flip-in-hor-bottom" id="explain">Uitleg</div>
+                    <div class="main_menu_item flip-in-hor-bottom" id="pre_alone">Alleen</div>
+                    <div class="main_menu_item flip-in-hor-bottom" id="play_group">Groep</div>
+                </div>
+                <div class="main_menu_container slide-in-bottom" id="explain_menu">
+                    <div class="main_menu_item flip-in-hor-bottom" id="explain_group_button">Leider van een groep?</div>
+                    <div class="main_menu_item flip-in-hor-bottom" id="explain_part_button">Deelnemer van een groep?</div>
+                    <div class="main_menu_item flip-in-hor-bottom" id="explain_alone_button">Alleen spelen?</div>
+                </div>
+                <div class="main_menu_container explain_container">
+                    <div class="explain_inner_container">
+                        <div id="explain_part">
+                            <h3>Deelnemer van een groep</h3>
+                            Deze app is een online mobile trivia game waar je vragen over de polder, molen, geschiedenis, flora en fauna moet beantwoorden.<br><br>Als een Deelnemer maak je deel uit van een groep die beheert wordt door een Groepsleider.<br><br>
+                            Stel je kennis van de Hempensermeerpolder op de proef met uitdagende vragen!
+                        </div>
+                        <div id="explain_alone">
+                            <h3>Spelen</h3>
+                            Deze app is een online mobile trivia game waar je vragen over de polder, molen, geschiedenis, flora en fauna moet beantwoorden.<br><br>
+                            Stel je kennis van de Hempensermeerpolder op de proef met uitdagende vragen!
+                        </div>
+                        <div id="explain_group">
+                            <h3>Leider van een groep</h3>
+                            Deze app is een online mobile trivia game waar je vragen over de polder, molen, geschiedenis, flora en fauna moet beantwoorden.<br><br>Als een Groepsleider heb je mogelijkheid om een groep aan te maken waar Deelnemers zich aan kunnen sluiten.<br><br>
+                            Stel je kennis van de Hempensermeerpolder op de proef met uitdagende vragen!
+                        </div>
+                        <div class="back_to_start_button">
+                            <p>Terug naar startscherm</p>
+                        </div>
+                        <div id="alone">
+                            <p>Ik wil spelen!</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="overlay correct">Goed!</div>
                 <div class="overlay not_correct">Fout!</div>
                 <div class="question_container">
+                    <div class="category"></div>
                     <div class="question"></div>
                     <div class="answer answers_0"></div>
                     <div class="answer answers_1"></div>

@@ -50,9 +50,9 @@
                                 echo $temp_user_row[0]["user_name"]." ".$temp_user_row[0]["surname"]." heeft ";
                             }
                             if ($row[$i]["score"] == "1") {
-                                echo $row[$i]["score"]." punt";
+                                echo $row[$i]["score"]." punt van de 0";
                             } else {
-                                echo $row[$i]["score"]." punten";
+                                echo $row[$i]["score"]." punten van de 0";
                             }
                             if ($row[$i]["finished"] == "1") {
                                 echo " ✓|";
@@ -75,7 +75,7 @@
             if($result_answer = $mysqli->query("SELECT * FROM scores WHERE user_token = '$token' AND group_id = '$group_id'")) {
                 $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                 for ($i = 0; $i < $result_answer->num_rows; $i++) {
-                    echo $row[$i]["score"];
+                    echo $row[$i]["score"]."/0";
                     if ($row[$i]["finished"] != "0") {
                         $mysqli->query("UPDATE scores SET finished='1' WHERE user_token = '$token' AND group_id = '$group_id'");
                     }
@@ -163,7 +163,6 @@
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
             $group_id = $mysqli->real_escape_string($_GET['group_id']);
-
             if($result_answer = $mysqli->query("SELECT * FROM users INNER JOIN scores ON users.session_token = scores.user_token AND scores.group_id = '$group_id'")) {
                 $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                 for ($i = 0; $i < $result_answer->num_rows; $i++) {
@@ -259,7 +258,7 @@
             $mysqli = $db->getConnection();
         }
 
-        function createUser() {
+        function validateUser() {
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
             $user_name = $mysqli->real_escape_string($_GET['user_name']);
@@ -276,7 +275,7 @@
 
             //REGULAR LOGIN
             if(strlen($leadername) > 0 && strlen($leadersurname) > 0 && strlen($leadercode) == 0) {
-                if($result_answer = $mysqli->query("SELECT * FROM users WHERE admin_level='1' AND user_name='$leadername' AND surname='$leadersurname'")) {
+                if($result_answer = $mysqli->query("SELECT * FROM users WHERE admin_level='1' AND user_name='$leadername' AND surname='$leadersurname' AND admin_code!='-1'")) {
                     if(($result_answer->num_rows) > 0) {
                         $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                         $admin_id = $row[0]["id"];
@@ -287,43 +286,51 @@
                         $exists = true;
                         $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                         $token = $row[0]["session_token"];
+                        echo "regular";
                     }
                 }
-                if (!$exists) {
+                if ($admin_id != -1 && !$exists) {
                     $token = uniqid(rand());
                     if($mysqli->query("INSERT INTO `users`(`admin_level`,`user_name`, `surname`, `age`, `session_token`, `birthdate`, `admin_parent_id`) VALUES ('0','$user_name','$surname','$age','$token','$temp_age','$admin_id')")) {
-
+                        echo "regular";
                     } else {
                         echo mysqli_error($mysqli);
                     }
                 }
+                if ($admin_id == -1) echo "no_admin";
             //ADMIN LOGIN
             } else if (strlen($leadername) == 0 && strlen($leadersurname) == 0 && strlen($leadercode) > 0) {
-                $admin_code = 0;
+                $admin_code = "";
                 if($result_answer = $mysqli->query("SELECT * FROM admin_codes WHERE admin_code='$leadercode' AND used='0'")) {
                     if(($result_answer->num_rows) > 0) {
                         $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                         $admin_code = $row[0]["admin_code"];
                     }
                 }
-                if($result_answer = $mysqli->query("SELECT * FROM users WHERE user_name='$user_name' AND surname='$surname' AND age='$age' AND birthdate='$temp_age' AND admin_code='$leadercode'")) {
-                    if(($result_answer->num_rows) > 0) {
-                        $exists = true;
-                        $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
-                        $token = $row[0]["session_token"];
+                if ($leadercode == $admin_code && $admin_code != "") {
+                    if($result_answer = $mysqli->query("SELECT * FROM users WHERE user_name='$user_name' AND surname='$surname' AND age='$age' AND birthdate='$temp_age' AND admin_code='$leadercode'")) {
+                        if(($result_answer->num_rows) > 0) {
+                            $exists = true;
+                            $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+                            $token = $row[0]["session_token"];
+                            echo "admin";
+                        }
                     }
-                }
-                if (!$exists) {
-                    $token = uniqid(rand());
-                    if($mysqli->query("INSERT INTO `users`(`admin_level`,`user_name`, `surname`, `age`, `session_token`, `birthdate`, `admin_code`, `admin_parent_id`) VALUES ('1','$user_name','$surname','$age','$token','$temp_age','$leadercode','-1')")) {
-
-                    } else {
-                        echo mysqli_error($mysqli);
+                    if (!$exists) {
+                        $token = uniqid(rand());
+                        if($mysqli->query("INSERT INTO `users`(`admin_level`,`user_name`, `surname`, `age`, `session_token`, `birthdate`, `admin_code`, `admin_parent_id`) VALUES ('1','$user_name','$surname','$age','$token','$temp_age','$leadercode','-1')")) {
+                            //$mysqli->query("UPDATE admin_codes SET used='1' WHERE admin_code='$leadercode'");
+                            echo "admin";
+                        } else {
+                            echo mysqli_error($mysqli);
+                        }
                     }
+                } else {
+                    echo "no_code";
                 }
             }
 
-            echo $token;
+            echo ":".$token;
         }
 
         function createGroup() {
@@ -333,18 +340,31 @@
             $group_admin = $mysqli->real_escape_string($_GET['group_admin']);
             $categories = $mysqli->real_escape_string($_GET['categories']);
             $users = $mysqli->real_escape_string($_GET['users']);
-            $categories = json_encode($categories);
             //$users = json_encode($users);
             $current_date = json_encode(date('Y-m-d'));
             $users_array = explode(",", $users);
+            $categories_array = explode(",",$categories);
+            $exists = false;
 
             //echo $current_date;
-            if ($mysqli->query("INSERT INTO groups (group_name, time_created, categories, started, group_admin) VALUES ('$group_name', '$current_date', '$categories', 0, '$group_admin')")) {
+            if ($mysqli->query("INSERT INTO groups (group_name, time_created, started, group_admin) VALUES ('$group_name', '$current_date', 0, '$group_admin')")) {
                 $temp_new_id = $mysqli->insert_id;
                 if($result = $mysqli->query("SELECT * FROM users WHERE session_token = '$group_admin'")) {
+
+                    for($i = 0; $i < count($categories_array); $i++) {
+                        $mysqli->query("INSERT INTO group_has_categories (group_id, user_id) VALUES ('$temp_new_id', '$categories_array[$i]')");
+                    }
+
                     $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     $group_admin_id = $row[0]["id"];
-                    $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$group_admin_id')");
+                    if($result_answer = $mysqli->query("SELECT * FROM group_has_user WHERE user_id='$temp_new_id' AND group_id='$group_admin_id'")) {
+                        if(($result_answer->num_rows) > 0) {
+                            $exists = true;
+                        }
+                    }
+                    if (!$exists) {
+                        $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$group_admin_id')");
+                    }
                 }
                 //echo $mysqli->insert_id;
                 for ($i = 0; $i < count($users_array); $i++) {
@@ -357,12 +377,6 @@
             } else {
 
             }
-        }
-
-        function validateUser() {
-            $db = CallFunctions::getInstance();
-            $mysqli = $db->getConnection();
-            echo "ye";
         }
 
         function validateAnswer() {
@@ -389,12 +403,53 @@
             echo mysqli_error($mysqli);
         }
 
-
-
-        function getQuestionAndAnswers() {
+        function getRandomCategory() {
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
-            $input_category = preg_replace( '/[^0-9]/', '', $_GET['category_id']);
+            $local_alone_categories = $mysqli->real_escape_string($_GET['local_alone_categories']);
+
+            if($result_categories = $mysqli->query("SELECT categories FROM groups WHERE id='$group_id'")) {
+                $local_alone_categories = "";
+                echo $result_categories->fetch_row()[0];
+            }
+
+
+        }
+
+        function getCatAndQuestions() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+
+            $group_id = $mysqli->real_escape_string($_GET['group_id']);
+            $local_alone_categories = $mysqli->real_escape_string($_GET['local_alone_categories']);
+            $category_array = explode(",",$local_alone_categories);
+            shuffle($category_array);
+
+            for($i = 0; $i < count($category_array); $i++) {
+                //echo $category_array[$i];
+                if($result_categories = $mysqli->query("SELECT * FROM categories WHERE id='$category_array[$i]'")) {
+                    $row = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
+                    for ($j = 0; $j < $result_categories->num_rows; $j++) {
+                        $category_id = $row[$j]["id"];
+                        $category_name = $row[$j]["category_name"];
+
+                        echo $category_id."[";
+
+                        if($result_questions = $mysqli->query("SELECT * FROM questions WHERE cat_id='$category_id' ORDER BY RAND() ")) {
+                            $row_questions = mysqli_fetch_all($result_questions, MYSQLI_ASSOC);
+                            for($k = 0; $k < $result_questions->num_rows; $k++) {
+                                echo $row_questions[$k]["id"];
+                                if ($k != $result_questions->num_rows-1) echo ",";
+                            }
+                        }
+
+                        echo "]".$category_name."|";
+                    }
+                }
+            }
+
+
+            /*
             $result = $mysqli->query("SELECT * FROM questions");
             $amount_of_questions = mysqli_num_rows($result);
             $questions_answered_array = explode(",",$_GET['questions_answered']);
@@ -402,21 +457,20 @@
                 echo "end";
             } else {
                 while (in_array(($input_question = rand(0,mysqli_num_rows($result)-1)),$questions_answered_array));
-                if ($result_question = $mysqli->query("SELECT question FROM questions WHERE id = $input_question")) {
-                    echo $result_question->fetch_row()[0];
-                    echo "|";
-                    if ($result_category = $mysqli->query("SELECT cat_id FROM questions WHERE id = $input_question")) {
-                        $result_category_id = preg_replace( '/[^0-9]/', '', $result_category->fetch_row()[0]);
-                        if($result_category_name = $mysqli->query("SELECT category_name FROM categories WHERE id = $result_category_id")) {
-                            echo $result_category_name->fetch_row()[0];
-                        }
-                    }
-                    echo "|".$input_question;
-                    if($result_answer = $mysqli->query("SELECT answer FROM answers WHERE question_id = $input_question")) {
-                        $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
-                        for ($i = 0; $i < $result_answer->num_rows; $i++) {
-                            echo "|".$row[$i]["answer"];
-                        }
+            }
+            */
+        }
+
+        function getQuestionWithAnswers() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $input_question = preg_replace( '/[^0-9]/', '', $_GET['question_id']);
+            if ($result_question = $mysqli->query("SELECT question FROM questions WHERE id = '$input_question'")) {
+                echo $result_question->fetch_row()[0];
+                if($result_answer = $mysqli->query("SELECT answer FROM answers WHERE question_id = '$input_question'")) {
+                    $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+                    for ($i = 0; $i < $result_answer->num_rows; $i++) {
+                        echo "|".$row[$i]["answer"];
                     }
                 }
             }
@@ -442,7 +496,13 @@
         function getAllUsersCreateGroupList() {
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
-            if($result_answer = $mysqli->query("SELECT * FROM users WHERE waiting='1'")) {
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
+            $admin_id;
+            if($result_admin = $mysqli->query("SELECT * FROM users WHERE admin_level='1' AND session_token='$session_token'")) {
+                $row_admin = mysqli_fetch_all($result_admin, MYSQLI_ASSOC);
+                $admin_id = $row_admin[0]["id"];
+            }
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE waiting='1' AND admin_parent_id='$admin_id'")) {
                 $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                 for ($i = 0; $i < $result_answer->num_rows; $i++) {
                     echo $row[$i]["id"]."=".$row[$i]["user_name"]." ".$row[$i]["surname"].":".$row[$i]["waiting_last_ping"]."|";
@@ -468,6 +528,7 @@
                 }
             }
         }
+
         function timeOut() {
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
@@ -475,17 +536,25 @@
             $mysqli->query("UPDATE users SET waiting='0' WHERE id = '$user_id'");
             echo "success";
         }
+
+        function validateAdmin() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['token']);
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='1'")) {
+                if($result_answer->num_rows > 0) echo "is_admin";
+            }
+        }
     }
 
     $functions = new CallFunctions;
-
     $functions_array = [
         "validateAnswer",
         "getCategories",
         "getGroups",
-        "getQuestionAndAnswers",
+        "getCatAndQuestions",
         "createGroup",
-        "createUser",
+        "validateUser",
         "joinGroup",
         "getUsers",
         "exitAllGroups",
@@ -500,7 +569,10 @@
         "finishUser",
         "setWaitingToTrue",
         "setWaitingToFalse",
-        "timeOut"
+        "timeOut",
+        "validateAdmin",
+        "getRandomCategory",
+        "getQuestionWithAnswers"
     ];
 
     if(isset($_GET['function']) && in_array($_GET['function'], $functions_array)) {

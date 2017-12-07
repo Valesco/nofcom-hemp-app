@@ -54,7 +54,6 @@ function init() {
 		model = collada.scene;
 		var skybox = model.children[0].children[1];
 		var skybox_material = skybox.material[1];
-		console.log(skybox_material);
 		skybox_material.color = {r: 2.1, g: 2.1, b: 2.1};
 	});
 	loader.load( 'assets/models/blades.dae', function ( collada ) {
@@ -98,7 +97,6 @@ function init() {
 		bird.scale.x = bird.scale.x * bird_scale_mult;
 		bird.scale.y = bird.scale.y * bird_scale_mult;
 		bird.scale.z = bird.scale.z * bird_scale_mult;
-		console.log(bird);
 		scene.add( bird );
 	}
 }
