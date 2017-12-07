@@ -94,6 +94,7 @@ window.onload = function() {
 		document.getElementById("explain_alone").style.display="block";
 		document.getElementsByClassName("back_to_start_button")[0].style.display="none";
 		document.getElementById("alone").style.display="block";
+		document.getElementById("categories_alone").style.display="block";
 		hideAllLogosExceptPara(2);
 	}
 
@@ -104,6 +105,7 @@ window.onload = function() {
 
 	document.getElementById("explain_alone_button").onclick = function() {
 		document.getElementById("explain_menu").style.display="none";
+		document.getElementById("categories_alone").style.display="none";
 		document.getElementsByClassName("explain_container")[0].style.display="block";
 		document.getElementById("explain_alone").style.display="block";
 		hideAllLogosExceptPara(2);
@@ -145,6 +147,7 @@ window.onload = function() {
 
 	document.getElementById("user_chosen_no").onclick = function() {
 		//console.log(active_user);
+		document.getElementById("new_user_prompt_title").innerHTML="Inloggen als deelnemer";
 		document.getElementById("leadercode_title").style.display="none";
 		document.getElementById("leadercode").style.display="none";
 		if (active_user == 1) {
@@ -278,6 +281,69 @@ window.onload = function() {
 		return age;
 	}
 
+	var age_d_container = document.getElementById("age_d");
+	var age_m_container = document.getElementById("age_m");
+	var age_y_container = document.getElementById("age_y");
+
+	age_d_container.onkeyup = function(e) {
+		next_date(e);
+	};
+
+	age_m_container.onkeyup = function(e) {
+		next_date(e);
+	};
+
+	age_y_container.onkeyup = function(e) {
+		next_date(e);
+	};
+
+	function next_date(e) {
+		var length = e.target.value.length;
+		var max = e.target.maxLength;
+		if(length == max) {
+			var next = e.target;
+			while (next = next.nextElementSibling) {
+				if (next == null) break;
+				if (next.tagName.toLowerCase() === "input") {
+					next.focus();
+					break;
+				}
+				if(e.target.id == "age_y") {
+					document.getElementById("leadercode").focus();
+				}
+			}
+		}
+	}
+
+
+	/*
+	function next_date() {
+		container.onkeyup = function(e) {
+		    var target = e.srcElement || e.target;
+		    var maxLength = parseInt(target.attributes["maxlength"].value, 10);
+		    var myLength = target.value.length;
+		    if (myLength >= maxLength) {
+		        var next = target;
+		        while (next = next.nextElementSibling) {
+		            if (next == null) break;
+		            if (next.tagName.toLowerCase() === "input") {
+		                next.focus();
+		                break;
+		            }
+		        }
+		    } else if (myLength === 0) {
+		        var previous = target;
+		        while (previous = previous.previousElementSibling) {
+		            if (previous == null) break;
+		            if (previous.tagName.toLowerCase() === "input") {
+		                previous.focus();
+		                break;
+		            }
+		        }
+		    }
+		}
+	}
+*/
 	document.getElementById("chosen_username").onclick = function() {
 		document.getElementById("chosen_username").style.display="none";
 		var leadername = document.getElementById("leadername").value;
@@ -679,21 +745,21 @@ window.onload = function() {
 		}
 	}
 
-	function showFinalScoreGroup(score) {
+	function showFinalScoreGroup(score,amount_of_questions) {
 		document.getElementsByClassName("question_container")[0].style.display="none";
 		document.getElementsByClassName("category_container")[0].style.display="none";
 		document.getElementsByClassName("final_score_container")[0].style.display="block";
 		if (glob_group_id == -1 && frontadmin == 0) {
 			console.log("show final score: "+score);
-			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "Je eindscore: <br>"+score;
+			document.getElementsByClassName("inner_pos_score")[0].innerHTML = score+" van de "+amount_of_questions+" punten";
 		} else if (glob_group_id != -1 && frontadmin == 0) {
-			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "Je eindscore: <br>"+score;
+			document.getElementsByClassName("inner_pos_score")[0].innerHTML = score+" van de "+amount_of_questions+" punten";
 		} else if (glob_group_id != -1 && frontadmin == 1) {
 			showAdminScores();
 		}
 	}
 
-	function showAdminScores() {
+	function showAdminScores(amount_of_questions) {
 		stopRequestingLobbyEndScores = 0;
 		var admin_token = readCookie('token');
 		var group_id = glob_group_id;
@@ -825,12 +891,16 @@ window.onload = function() {
 
 		if (category == "Geschiedenis vragen") {
 			document.getElementById("img_geschiedenis").style.display = "block";
+			document.getElementsByClassName("question")[0].style.backgroundColor="#825324";
 		} else if (category == "Molen vragen") {
 			document.getElementById("img_molen").style.display = "block";
+			document.getElementsByClassName("question")[0].style.backgroundColor="#98442c";
 		} else if (category == "Natuur vragen") {
 			document.getElementById("img_floraenfauna").style.display = "block";
+			document.getElementsByClassName("question")[0].style.backgroundColor="#108244";
 		} else if (category == "Polder vragen") {
 			document.getElementById("img_polder").style.display = "block";
+			document.getElementsByClassName("question")[0].style.backgroundColor="#067ea0";
 		} else {
 			document.getElementById("img_polder").style.display = "block";
 		}
@@ -878,16 +948,24 @@ window.onload = function() {
 					var categories_with_questions = answer_return.split("|");
 					var question_progression = 0;
 					var category_progression = 0;
+					var amount_of_questions = 0;
 					var current_question_id;
 					var category_name;
 
 					function getCategoryWithQuestions(category_progression) {
 						category_questions = [];
+						amount_of_questions = 0;
 						if (categories_with_questions[category_progression] != "") {
 							category_id = categories_with_questions[category_progression].split("[")[0];
 							category_name = categories_with_questions[category_progression].split("]")[1];
 							category_questions = categories_with_questions[category_progression].split("[")[1].split("]")[0].split(",");
 
+							for(var i = 0; i < categories_with_questions.length-1; i++) {
+								var temp_category_questions = categories_with_questions[i].split("[")[1].split("]")[0].split(",");
+								amount_of_questions += temp_category_questions.length;
+							}
+
+							console.log(amount_of_questions);
 						}
 						if(category_questions[question_progression] != undefined) {
 							current_question_id = category_questions[question_progression];
@@ -909,6 +987,7 @@ window.onload = function() {
 							document.getElementsByClassName("question_container")[0].className += " slide-out-bottom";
 							document.getElementsByClassName("chosen_container")[0].style.display="block";
 							document.getElementById("chosen_answer_content").innerHTML = this.innerHTML;
+							document.getElementById("chosen_answer_title").innerHTML = document.getElementsByClassName("question")[0].innerHTML;
 
 							var potential_answer = this.id;
 							document.getElementById("chosen_yes").onclick = function() {
@@ -928,7 +1007,7 @@ window.onload = function() {
 
 								if (category_progression == categories_with_questions.length-1) {
 									document.getElementsByClassName("chosen_container")[0].style.display="none";
-									validateQuestion(current_question_id,potential_answer,"true");
+									validateQuestion(current_question_id,potential_answer,"true",amount_of_questions);
 									document.getElementsByClassName("category_prompt_overlay")[0].outerHTML='';
 									//endGame(local_score);
 								} else {
@@ -989,11 +1068,7 @@ window.onload = function() {
 		}
 	}
 
-	function validateQuestion(question_id,potential_answer,end) {
-
-		//console.log("check question_id:"+question_id);
-		//console.log("check potential_answer:"+potential_answer);
-
+	function validateQuestion(question_id,potential_answer,end,amount_of_questions) {
 		var answer_return, httpRequest;
 		var user_id = readCookie('token');
 		httpRequest = new XMLHttpRequest();
@@ -1011,17 +1086,11 @@ window.onload = function() {
 					//console.log(answer_return);
 					if (answer_return == "correct") {
 						local_score++;
-						//console.log("INCREMENT TO: "+local_score);
-						//console.log("local alone game correct");
-					} else {
-						//console.log(answer_return == "correct");
 					}
-					//alertContents(answer_return);
 				} else {
 					answer_return = 'There was a problem with the request.';
-					//alertContents(answer_return);
 				}
-				if (end == "true") endGame(local_score);
+				if (end == "true") endGame(local_score,amount_of_questions);
 			}
 		}
 	}
@@ -1034,7 +1103,7 @@ window.onload = function() {
 		}
 	}
 
-	function endGame(local_score) {
+	function endGame(local_score,amount_of_questions) {
 		//console.log("ENDGAME SCORE "+local_score);
 		document.getElementsByClassName("chosen_container")[0].style.display="none";
 		emptyQuestionAnswers();
@@ -1052,9 +1121,9 @@ window.onload = function() {
 					answer_return = httpRequest.responseText;
 					if (answer_return == "" || answer_return == undefined) {
 						//console.log(local_score);
-						showFinalScoreGroup(local_score);
+						showFinalScoreGroup(local_score,amount_of_questions);
 					} else {
-						showFinalScoreGroup(answer_return);
+						showFinalScoreGroup(answer_return,amount_of_questions);
 					}
 				} else {
 					answer_return = 'There was a problem with the request.';

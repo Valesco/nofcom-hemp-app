@@ -47,18 +47,17 @@
                             $temp_user = $row[$i]["user_token"];
                             if($result_user = $mysqli->query("SELECT * FROM users WHERE session_token = '$temp_user'")) {
                                 $temp_user_row = mysqli_fetch_all($result_user, MYSQLI_ASSOC);
+                                if ($row[$i]["finished"] == "1") {
+                                    echo "✓ ";
+                                }
                                 echo $temp_user_row[0]["user_name"]." ".$temp_user_row[0]["surname"]." heeft ";
                             }
                             if ($row[$i]["score"] == "1") {
-                                echo $row[$i]["score"]." punt";
+                                echo $row[$i]["score"]." puntje";
                             } else {
                                 echo $row[$i]["score"]." punten";
                             }
-                            if ($row[$i]["finished"] == "1") {
-                                echo " ✓|";
-                            } else {
-                                echo "|";
-                            }
+                            echo "|";
                         }
                     }
                 }

@@ -11,6 +11,8 @@
         <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
         <meta http-equiv="pragma" content="no-cache" />
 
+        <title>Hempensermeerpolder App</title>
+
         <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet">
         <link rel="stylesheet" href="assets/icons/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/stylesheet.css">
@@ -20,7 +22,7 @@
     <body>
         <div class="category_prompt_overlay">
             <div class="category_prompt_overlay_inner">
-                <img src="assets/img/geschiedenis.png" id="img_geschiedenis">
+                <img src="assets/img/geschiedenis.jpg" id="img_geschiedenis">
                 <img src="assets/img/floraenfauna.jpg" id="img_floraenfauna">
                 <img src="assets/img/polder.png" id="img_polder">
                 <img src="assets/img/molen.jpg" id="img_molen">
@@ -101,32 +103,33 @@
                 <div class="dark_overlay pre_new_user_prompt_container">
                     <div class="pre_new_user_prompt">
                         <h1 id="pre_new_user_prompt_text"></h1>
-                        <h1>Ben je een beheerder?</h1>
+                        <h1>Als beheerder heb je een code nodig</h1>
                         <div class="chosen_button_container">
                             <div class="chosen_button" id="user_chosen_yes">
-                                <p>Ja</p>
+                                <p>Beheerder</p>
                             </div>
                             <div class="chosen_button" id="user_chosen_no">
-                                <p>Nee</p>
+                                <p>Deelnemer</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="dark_overlay new_user_prompt_container">
                     <div class="new_user_prompt">
+                        <h1 id="new_user_prompt_title">Inloggen als beheerder</h1>
                         <h1>Voornaam</h1>
-                        <input id="username" placeholder="voornaam" type="text" name="username">
+                        <input id="username" placeholder="voornaam" type="text">
                         <h1>Achternaam</h1>
-                        <input id="surname" placeholder="achternaam" type="text" name="username">
+                        <input id="surname" placeholder="achternaam" type="text">
                         <h1>Geboortedatum</h1>
-                        <input class="age_input" placeholder="dag" id="age_d" type="text" name="username" maxlength="2">
-                        <input class="age_input" placeholder="maand" id="age_m" type="text" name="username" maxlength="2">
-                        <input class="age_input" placeholder="jaar" id="age_y" type="text" name="username" maxlength="4">
+                        <input class="age_input" placeholder="dag" id="age_d" type="tel" maxlength="2">
+                        <input class="age_input" placeholder="maand" id="age_m" type="tel" maxlength="2">
+                        <input class="age_input" placeholder="jaar" id="age_y" type="tel" maxlength="4">
                         <h1 id="leadername_title">Wat is de voor- en achternaam van je groepsleider?</h1>
-                        <input style="width: 48%; margin:1px;" placeholder="voornaam" id="leadername" type="text" name="username">
-                        <input style="width: 48%; margin:1px;" placeholder="achternaam" id="leadersurname" type="text" name="username">
+                        <input style="width: 48%; margin:1px;" placeholder="voornaam" id="leadername" type="text">
+                        <input style="width: 48%; margin:1px;" placeholder="achternaam" id="leadersurname" type="text">
                         <h1 id="leadercode_title">Voer de beheerderscode in</h1>
-                        <input id="leadercode" placeholder="code" type="text" name="username">
+                        <input id="leadercode" placeholder="code" type="text">
                         <div class="chosen_button" id="chosen_username">
                             <p>Aanmelden</p>
                         </div>
@@ -141,6 +144,7 @@
                 </div>
                 <div class="chosen_container">
                     <div id="chosen_answer">
+                        <h1 id="chosen_answer_title"></h1>
                         <p id="chosen_answer_question">Je gekozen antwoord is:</p>
                         <p id="chosen_answer_content">Gekozen antwoord</p>
                         <div class="chosen_button_container">
@@ -200,9 +204,9 @@
                 </div>
                 <div class="dark_overlay alone_select_categories_container">
                     <div class="alone_select_inner_container">
-                        <h1>Van welke categorieën moeten er vragen komen?</h1>
+                        <h1>Vanuit welke categorieën moeten er vragen komen?</h1>
                         <div class="alone_select_categories">
-
+                            Laden..
                         </div>
                         <div id="alone">
                             <p>Ik wil spelen!</p>
@@ -212,7 +216,7 @@
                 <div class="overlay correct">Goed!</div>
                 <div class="overlay not_correct">Fout!</div>
                 <div class="question_container">
-                    <div class="category"></div>
+                    <div style="display:none;" class="category"></div>
                     <div class="question"></div>
                     <div class="answer answers_0"></div>
                     <div class="answer answers_1"></div>
@@ -227,7 +231,7 @@
                 </div>
                 <div class="final_score_container">
                     <div class="pos_score">
-                        <h3>Eindscores</h3>
+                        <h3>Eindscore</h3>
                         <div class="inner_pos_score"></div>
                     </div>
                     <div class="sub_final_score_container">
