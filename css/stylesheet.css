@@ -223,7 +223,7 @@ body {
     /* margin-top: 20px; */
     /* margin-right: 27px; */
     /* font-size: 22px; */
-    height: 35%;
+    height: 40%;
     width: 100%;
     background-color: #259fff8c;
     color: white;
@@ -294,8 +294,8 @@ body {
 }
 
 .inner_pos_score {
-    position: relative;
-    top: 40%;
+    /* position: relative; */
+    /* top: 40%; */
     max-height: 70%;
     margin: 0 auto;
     width: 80%;
@@ -514,6 +514,7 @@ body {
 }
 
 #categories_alone {
+    display:none;
     background-color: #108244;
     color:white;
     padding: 1px;
@@ -1131,6 +1132,13 @@ input {
     margin: 15px 0px 15px 0px;
     padding: 0px;
     /* width: 100%; */
+}
+
+.parrot {
+    height: 50px;
+    margin-top: 0px;
+    margin-bottom: 19px;
+    padding: 20px;
 }
 
 #play {

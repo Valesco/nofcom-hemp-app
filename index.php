@@ -232,6 +232,7 @@
                 <div class="final_score_container">
                     <div class="pos_score">
                         <h3>Eindscore</h3>
+                        <img class="parrot" src="assets/img/parrot.gif">
                         <div class="inner_pos_score"></div>
                     </div>
                     <div class="sub_final_score_container">
