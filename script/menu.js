@@ -78,8 +78,14 @@ window.onload = function() {
 		glob_group_id = -1;
 		local_score = 0;
 		questions_answered = [];
-		document.getElementsByClassName("explain_container")[0].style.display="none";
+		document.getElementsByClassName("alone_select_categories_container")[0].style.display="none";
 		fillQuestions();
+	}
+
+	document.getElementById("categories_alone").onclick = function() {
+		document.getElementsByClassName("explain_container")[0].style.display="none";
+		document.getElementsByClassName("alone_select_categories_container")[0].style.display="block";
+		fillAloneCategoriesContent();
 	}
 
 	document.getElementById("pre_alone").onclick = function() {
@@ -129,6 +135,7 @@ window.onload = function() {
 	document.getElementById("play_group").onclick = function() {
 		document.getElementById("start_menu").style.display="none";
 		document.getElementsByClassName("pre_new_user_prompt_container")[0].style.display="block";
+		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
 		if (readCookie('name') != null) {
 			document.getElementById("pre_new_user_prompt_text").innerHTML = "Welkom terug: "+readCookie('name');
 		} else {
@@ -318,11 +325,6 @@ window.onload = function() {
 				}
 			}
 		}
-	}
-
-	function hideMainMenuShowQandA() {
-		document.getElementsByClassName("category_container")[0].style.display="none";
-		document.getElementsByClassName("question_container")[0].style.display="block";
 	}
 
 	function hideQandAShowMainMenu() {
@@ -682,10 +684,10 @@ window.onload = function() {
 		document.getElementsByClassName("category_container")[0].style.display="none";
 		document.getElementsByClassName("final_score_container")[0].style.display="block";
 		if (glob_group_id == -1 && frontadmin == 0) {
-			console.log("show final score: "+local_score);
-			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "Je eindscore: "+local_score;
+			console.log("show final score: "+score);
+			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "Je eindscore: <br>"+score;
 		} else if (glob_group_id != -1 && frontadmin == 0) {
-			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "Je eindscore: "+score;
+			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "Je eindscore: <br>"+score;
 		} else if (glob_group_id != -1 && frontadmin == 1) {
 			showAdminScores();
 		}
@@ -705,13 +707,14 @@ window.onload = function() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
 					document.getElementsByClassName("inner_pos_score")[0].innerHTML = "";
+					document.getElementsByClassName("inner_pos_score")[0].style.fontSize = "18px";
 					answer_return = httpRequest.responseText;
 					var user_scores = answer_return.split('|');
 					for(var i = 0; i < user_scores.length; i++) {
 						if(user_scores[i] != "") {
 							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div>"+user_scores[i]+"</div>";
 						}
-						console.log(user_scores[i]);
+						//console.log(user_scores[i]);
 					}
 				} else {
 					answer_return = 'There was a problem with the request.';
@@ -719,7 +722,7 @@ window.onload = function() {
 				if (stopRequestingLobbyEndScores == 0) {
 					delay(function(){
 						showAdminScores();
-						console.log("ping");
+						//console.log("ping");
 					}, 100 );
 				}
 			}
@@ -805,18 +808,69 @@ window.onload = function() {
 		}
 	}
 
+	function categoryPrompt(category) {
+
+		document.getElementsByClassName("question_container")[0].style.display = "none";
+		var timer = 2750;
+
+		document.getElementsByClassName("category_prompt_overlay")[0].style.display = "block";
+		document.getElementsByClassName("category_prompt_overlay_inner")[0].classList.remove("slide-out-bottom");
+		document.getElementsByClassName("category_prompt_overlay_inner")[0].classList += " slide-in-bottom";
+
+		document.getElementById("category_prompt_text").innerHTML = category;
+		document.getElementById("img_geschiedenis").style.display = "none";
+		document.getElementById("img_molen").style.display = "none";
+		document.getElementById("img_floraenfauna").style.display = "none";
+		document.getElementById("img_polder").style.display = "none";
+
+		if (category == "Geschiedenis vragen") {
+			document.getElementById("img_geschiedenis").style.display = "block";
+		} else if (category == "Molen vragen") {
+			document.getElementById("img_molen").style.display = "block";
+		} else if (category == "Natuur vragen") {
+			document.getElementById("img_floraenfauna").style.display = "block";
+		} else if (category == "Polder vragen") {
+			document.getElementById("img_polder").style.display = "block";
+		} else {
+			document.getElementById("img_polder").style.display = "block";
+		}
+
+		window.setTimeout(function(){
+			document.getElementsByClassName("question_container")[0].style.display = "block";
+			document.getElementsByClassName("category_prompt_overlay_inner")[0].classList.remove("slide-in-bottom");
+			document.getElementsByClassName("category_prompt_overlay_inner")[0].className += " slide-out-bottom";
+		}, timer);
+
+		window.setTimeout(function(){
+			document.getElementsByClassName("category_prompt_overlay")[0].style.display = "none";
+		}, timer+750);
+	}
+
 	function fillQuestions() {
 		var answer_return, httpRequest;
 		httpRequest = new XMLHttpRequest();
 		if (!httpRequest) return false;
 		httpRequest.onreadystatechange = validate;
 
-		var temp_local_cats = "0,1,2,3";
+		var temp_local_cats = "";
+
+		if (glob_group_id == -1) {
+			var count = 0;
+			for (var i = 0; i < category_items.length-1; i++) {
+				if(document.getElementById("categories_alone_check_"+i).checked) {
+					if (i != 0 && count != 0) temp_local_cats += ",";
+					count++;
+					temp_local_cats += i;
+				}
+			}
+			console.log(temp_local_cats);
+		}
 
 		httpRequest.open('GET','controller.php?local_alone_categories='+temp_local_cats+'&group_id='+glob_group_id+'&questions_answered='+questions_answered+'&function=getCatAndQuestions');
 		httpRequest.send();
 		emptyQuestionAnswers();
 		var time_elapsed = 5;
+		var is_same_category = false;
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
@@ -825,9 +879,9 @@ window.onload = function() {
 					var question_progression = 0;
 					var category_progression = 0;
 					var current_question_id;
+					var category_name;
 
 					function getCategoryWithQuestions(category_progression) {
-						var category_name;
 						category_questions = [];
 						if (categories_with_questions[category_progression] != "") {
 							category_id = categories_with_questions[category_progression].split("[")[0];
@@ -840,6 +894,10 @@ window.onload = function() {
 							fillContent(current_question_id);
 						}
 						document.getElementsByClassName("category")[0].innerHTML = category_name;
+
+						if (!is_same_category) {
+							categoryPrompt(category_name);
+						}
 					}
 
 					for (var i = 0; i < 4; i++) {
@@ -857,17 +915,26 @@ window.onload = function() {
 								if (question_progression == category_questions.length-1) {
 									question_progression = 0;
 									category_progression++;
-									//console.log("next question in next category");
+
+									console.log("next question in next category");
+									is_same_category = false;
+
 								} else {
 									question_progression++;
-									//console.log("next question in same category");
+
+									console.log("next question in same category");
+									is_same_category = true;
 								}
+
 								if (category_progression == categories_with_questions.length-1) {
 									document.getElementsByClassName("chosen_container")[0].style.display="none";
-									endGame();
+									validateQuestion(current_question_id,potential_answer,"true");
+									document.getElementsByClassName("category_prompt_overlay")[0].outerHTML='';
+									//endGame(local_score);
+								} else {
+									validateQuestion(current_question_id,potential_answer,"false");
+									getCategoryWithQuestions(category_progression);
 								}
-								validateQuestion(current_question_id,potential_answer);
-								getCategoryWithQuestions(category_progression);
 								document.getElementById("chosen_yes").style.display = "none";
 								document.getElementById("chosen_no").style.display = "none";
 							}
@@ -901,7 +968,7 @@ window.onload = function() {
 						var questions_answers = httpRequest.responseText;
 						//console.log(questions_answers);
 
-						document.getElementsByClassName("question_container")[0].style.display="block";
+						//document.getElementsByClassName("question_container")[0].style.display="block";
 						document.getElementsByClassName("question_container")[0].classList.remove("slide-out-bottom");
 						document.getElementsByClassName("question_container")[0].classList.remove("slide-in-bottom");
 
@@ -922,10 +989,10 @@ window.onload = function() {
 		}
 	}
 
-	function validateQuestion(question_id,potential_answer) {
+	function validateQuestion(question_id,potential_answer,end) {
 
-		console.log("check question_id:"+question_id);
-		console.log("check potential_answer:"+potential_answer);
+		//console.log("check question_id:"+question_id);
+		//console.log("check potential_answer:"+potential_answer);
 
 		var answer_return, httpRequest;
 		var user_id = readCookie('token');
@@ -941,10 +1008,10 @@ window.onload = function() {
 				if (httpRequest.status === 200) {
 					answer_return = httpRequest.responseText;
 					document.getElementsByClassName("chosen_container")[0].style.display="none";
-					console.log(answer_return);
+					//console.log(answer_return);
 					if (answer_return == "correct") {
 						local_score++;
-						console.log("INCREMENT TO: "+local_score);
+						//console.log("INCREMENT TO: "+local_score);
 						//console.log("local alone game correct");
 					} else {
 						//console.log(answer_return == "correct");
@@ -954,6 +1021,7 @@ window.onload = function() {
 					answer_return = 'There was a problem with the request.';
 					//alertContents(answer_return);
 				}
+				if (end == "true") endGame(local_score);
 			}
 		}
 	}
@@ -966,7 +1034,8 @@ window.onload = function() {
 		}
 	}
 
-	function endGame() {
+	function endGame(local_score) {
+		//console.log("ENDGAME SCORE "+local_score);
 		document.getElementsByClassName("chosen_container")[0].style.display="none";
 		emptyQuestionAnswers();
 		var answer_return, httpRequest;
@@ -981,8 +1050,12 @@ window.onload = function() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
 					answer_return = httpRequest.responseText;
-					console.log("finalscore="+answer_return);
-					showFinalScoreGroup(answer_return);
+					if (answer_return == "" || answer_return == undefined) {
+						//console.log(local_score);
+						showFinalScoreGroup(local_score);
+					} else {
+						showFinalScoreGroup(answer_return);
+					}
 				} else {
 					answer_return = 'There was a problem with the request.';
 				}
@@ -1089,8 +1162,38 @@ window.onload = function() {
 		}
 	}
 
+	function fillAloneCategoriesContent() {
+		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
+		document.getElementsByClassName("categories_group_selection_container")[0].innerHTML = "";
+
+		var answer_return, httpRequest;
+		httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=getCategories');
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					category_items = answer_return.split("|");
+					for(var i = 0; i < category_items.length-1; i++) {
+						if (category_items[i] != "") {
+							var category_id = category_items[i].split("=")[0];
+							var category = category_items[i].split("=")[1];
+							document.getElementsByClassName("alone_select_categories")[0].innerHTML += '<div class="categories_alone_selection_item"><input type="checkbox" id="categories_alone_check_'+category_id+'" checked><p id="categories_alone_'+category_id+'">'+category+'</p></div>';
+						}
+					}
+				} else {
+					answer_return = 'There was a problem with the request.';
+				}
+			}
+		}
+	}
+
 	function fillGroupCategoriesContent() {
-		//console.log("load group cats");
+		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
 		document.getElementsByClassName("categories_group_selection_container")[0].innerHTML = "";
 
 		var answer_return, httpRequest;

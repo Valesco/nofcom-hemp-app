@@ -50,9 +50,9 @@
                                 echo $temp_user_row[0]["user_name"]." ".$temp_user_row[0]["surname"]." heeft ";
                             }
                             if ($row[$i]["score"] == "1") {
-                                echo $row[$i]["score"]." punt van de 0";
+                                echo $row[$i]["score"]." punt";
                             } else {
-                                echo $row[$i]["score"]." punten van de 0";
+                                echo $row[$i]["score"]." punten";
                             }
                             if ($row[$i]["finished"] == "1") {
                                 echo " ✓|";
@@ -75,7 +75,7 @@
             if($result_answer = $mysqli->query("SELECT * FROM scores WHERE user_token = '$token' AND group_id = '$group_id'")) {
                 $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                 for ($i = 0; $i < $result_answer->num_rows; $i++) {
-                    echo $row[$i]["score"]."/0";
+                    echo $row[$i]["score"]." punten";
                     if ($row[$i]["finished"] != "0") {
                         $mysqli->query("UPDATE scores SET finished='1' WHERE user_token = '$token' AND group_id = '$group_id'");
                     }
@@ -343,17 +343,12 @@
             //$users = json_encode($users);
             $current_date = json_encode(date('Y-m-d'));
             $users_array = explode(",", $users);
-            $categories_array = explode(",",$categories);
             $exists = false;
 
             //echo $current_date;
-            if ($mysqli->query("INSERT INTO groups (group_name, time_created, started, group_admin) VALUES ('$group_name', '$current_date', 0, '$group_admin')")) {
+            if ($mysqli->query("INSERT INTO groups (group_name, time_created, categories, started, group_admin) VALUES ('$group_name', '$current_date', '$categories' ,0, '$group_admin')")) {
                 $temp_new_id = $mysqli->insert_id;
                 if($result = $mysqli->query("SELECT * FROM users WHERE session_token = '$group_admin'")) {
-
-                    for($i = 0; $i < count($categories_array); $i++) {
-                        $mysqli->query("INSERT INTO group_has_categories (group_id, user_id) VALUES ('$temp_new_id', '$categories_array[$i]')");
-                    }
 
                     $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     $group_admin_id = $row[0]["id"];
@@ -390,30 +385,17 @@
             if ($result = $mysqli->query("SELECT id FROM answers WHERE is_correct = 1 AND question_id = $input_question")) {
                 if ((string)$result->fetch_row()[0] == (string)$input_answer) {
                     echo "correct";
-                    $appendprogression = "|".$input_question."=1";
+                    $appendprogression = "|".$input_question."=1.".$input_answer;
                     $mysqli->query("UPDATE scores SET progression = CONCAT(progression, '$appendprogression') WHERE user_token = '$token' AND group_id = '$group_id'");
                     $mysqli->query("UPDATE scores SET score = score + 1 WHERE user_token = '$token' AND group_id = '$group_id'");
                     //echo $token." ".$group_id;
                 } else {
                     echo "false";
-                    $appendprogression = "|".$input_question."=0";
+                    $appendprogression = "|".$input_question."=0.".$input_answer;
                     $mysqli->query("UPDATE scores SET progression = CONCAT(progression, '$appendprogression') WHERE user_token = '$token' AND group_id = '$group_id'");
                 }
             }
             echo mysqli_error($mysqli);
-        }
-
-        function getRandomCategory() {
-            $db = CallFunctions::getInstance();
-            $mysqli = $db->getConnection();
-            $local_alone_categories = $mysqli->real_escape_string($_GET['local_alone_categories']);
-
-            if($result_categories = $mysqli->query("SELECT categories FROM groups WHERE id='$group_id'")) {
-                $local_alone_categories = "";
-                echo $result_categories->fetch_row()[0];
-            }
-
-
         }
 
         function getCatAndQuestions() {
@@ -422,6 +404,14 @@
 
             $group_id = $mysqli->real_escape_string($_GET['group_id']);
             $local_alone_categories = $mysqli->real_escape_string($_GET['local_alone_categories']);
+
+            if($local_alone_categories == "") {
+                if($result_admin = $mysqli->query("SELECT * FROM groups WHERE id='$group_id'")) {
+                    $row_admin = mysqli_fetch_all($result_admin, MYSQLI_ASSOC);
+                    $local_alone_categories = $row_admin[0]["categories"];
+                }
+            }
+
             $category_array = explode(",",$local_alone_categories);
             shuffle($category_array);
 
@@ -571,7 +561,6 @@
         "setWaitingToFalse",
         "timeOut",
         "validateAdmin",
-        "getRandomCategory",
         "getQuestionWithAnswers"
     ];
 

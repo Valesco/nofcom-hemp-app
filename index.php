@@ -18,6 +18,15 @@
         <script type="text/javascript" src="script/engine/ColladaLoader2.js"></script>
     </head>
     <body>
+        <div class="category_prompt_overlay">
+            <div class="category_prompt_overlay_inner">
+                <img src="assets/img/geschiedenis.png" id="img_geschiedenis">
+                <img src="assets/img/floraenfauna.jpg" id="img_floraenfauna">
+                <img src="assets/img/polder.png" id="img_polder">
+                <img src="assets/img/molen.jpg" id="img_molen">
+                <h1 id="category_prompt_text"></h1>
+            </div>
+        </div>
         <div class="prompt_overlay">
             <div class="prompt_overlay_inner">
                 <h1 id="prompt_text">Helloo</h1>
@@ -47,7 +56,7 @@
                     <div class="create_group_container">
                         <h1>Hoe wil je de groep noemen?</h1>
                         <input id="groupname" type="text">
-                        <h1>Van welke categorien moeten er vragen komen?</h1>
+                        <h1>Van welke categorieën moeten er vragen komen?</h1>
                         <div class="categories_group_selection_container">
                             <div class="categories_group_selection_item_container">
 
@@ -183,6 +192,17 @@
                         </div>
                         <div class="back_to_start_button">
                             <p>Terug naar startscherm</p>
+                        </div>
+                        <div id="categories_alone">
+                            <p>Ik snap het</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="dark_overlay alone_select_categories_container">
+                    <div class="alone_select_inner_container">
+                        <h1>Van welke categorieën moeten er vragen komen?</h1>
+                        <div class="alone_select_categories">
+
                         </div>
                         <div id="alone">
                             <p>Ik wil spelen!</p>
