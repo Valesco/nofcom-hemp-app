@@ -53,9 +53,9 @@
                                 echo $temp_user_row[0]["user_name"]." ".$temp_user_row[0]["surname"]." heeft ";
                             }
                             if ($row[$i]["score"] == "1") {
-                                echo $row[$i]["score"]." puntje";
+                                echo $row[$i]["score"]." ";
                             } else {
-                                echo $row[$i]["score"]." punten";
+                                echo $row[$i]["score"]." ";
                             }
                             echo "|";
                         }
@@ -74,7 +74,7 @@
             if($result_answer = $mysqli->query("SELECT * FROM scores WHERE user_token = '$token' AND group_id = '$group_id'")) {
                 $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                 for ($i = 0; $i < $result_answer->num_rows; $i++) {
-                    echo $row[$i]["score"]." punten";
+                    echo $row[$i]["score"]." ";
                     if ($row[$i]["finished"] != "0") {
                         $mysqli->query("UPDATE scores SET finished='1' WHERE user_token = '$token' AND group_id = '$group_id'");
                     }
@@ -343,6 +343,7 @@
             $current_date = json_encode(date('Y-m-d'));
             $users_array = explode(",", $users);
             $exists = false;
+            $exists_user = false;
 
             //echo $current_date;
             if ($mysqli->query("INSERT INTO groups (group_name, time_created, categories, started, group_admin) VALUES ('$group_name', '$current_date', '$categories' ,0, '$group_admin')")) {
@@ -364,7 +365,14 @@
                 for ($i = 0; $i < count($users_array); $i++) {
                     //echo $temp_new_id." ".$users_array[$i]."|";
                     if ($users_array[$i] != 0) {
-                        $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$users_array[$i]')");
+                        if($result_answer = $mysqli->query("SELECT * FROM group_has_user WHERE user_id='$temp_new_id' AND group_id='$users_array[$i]'")) {
+                            if(($result_answer->num_rows) > 0) {
+                                $exists_user = true;
+                            }
+                        }
+                        if (!$exists_user) {
+                            $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$users_array[$i]')");
+                        }
                     }
                     //echo mysqli_error($mysqli);
                 }
@@ -534,6 +542,28 @@
                 if($result_answer->num_rows > 0) echo "is_admin";
             }
         }
+
+        function getAdminByUserToken() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['token']);
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='0'")) {
+                $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+                for ($i = 0; $i < $result_answer->num_rows; $i++) {
+                    $admin_id = $row[$i]["admin_parent_id"];
+                    if($result_admin = $mysqli->query("SELECT * FROM users WHERE id = '$admin_id' AND admin_level='1'")) {
+                        $row_admin = mysqli_fetch_all($result_admin, MYSQLI_ASSOC);
+                        for ($j = 0; $j < $result_admin->num_rows; $j++) {
+                            echo $row_admin[$j]["user_name"]." ".$row_admin[$j]["surname"];
+                        }
+                    } else {
+                        echo mysqli_error($mysqli);
+                    }
+                }
+            } else {
+                echo mysqli_error($mysqli);
+            }
+        }
     }
 
     $functions = new CallFunctions;
@@ -560,7 +590,8 @@
         "setWaitingToFalse",
         "timeOut",
         "validateAdmin",
-        "getQuestionWithAnswers"
+        "getQuestionWithAnswers",
+        "getAdminByUserToken"
     ];
 
     if(isset($_GET['function']) && in_array($_GET['function'], $functions_array)) {

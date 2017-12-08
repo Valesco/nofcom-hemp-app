@@ -223,7 +223,8 @@ body {
     /* margin-top: 20px; */
     /* margin-right: 27px; */
     /* font-size: 22px; */
-    height: 40%;
+    max-height: 70%;
+    /* height: 40%; */
     width: 100%;
     background-color: #259fff8c;
     color: white;
@@ -1066,7 +1067,7 @@ input {
     height: 100%;
     top: 60px;
     color: white;
-    background-color: #212121f5;
+    background-color: rgba(51, 51, 51, 0.95);
 }
 
 .explain_inner_container {
@@ -1091,11 +1092,12 @@ input {
     width:80%;
     margin:0 auto;
     padding: 1px;
-    background-color: #2daae1;
+    background-color: #248ab7;
     color: white;
     border-radius: 10px;
     cursor: pointer;
     margin-top: 20px;
+    text-align: center;
 }
 
 .category_prompt_overlay {
@@ -1150,9 +1152,49 @@ input {
     padding: 5px;
 }
 
+#user_chosen_menu {
+    margin-top: 15px;
+    background-color: #565656;
+    padding: 0px;
+    width: 100%;
+    float: left;
+}
+
+#user_chosen_logout {
+    margin-top: 15px;
+    background-color: #82572b;
+    padding: 0px;
+    width: 100%;
+    float: left;
+}
+
 #pre_new_user_prompt_text {
     font-size:26px;
     border:none;
+}
+
+#back_to_login_admin {
+    width:100%;
+    padding-top:1px;
+    padding-bottom:1px;
+}
+
+#back_to_login {
+    width:100%;
+    padding-top:1px;
+    padding-bottom:1px;
+}
+
+.back_to_explain_button {
+    width:80%;
+    margin:0 auto;
+    padding: 1px;
+    background-color: #248ab7;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+    text-align: center;
 }
 
 #category_prompt_text {

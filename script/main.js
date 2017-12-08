@@ -25,10 +25,6 @@ function init() {
 		scene.add( blades );
 		scene.add( mill );
 
-        var boundingBox = new THREE.Box3();
-        boundingBox.setFromObject( blades );
-        var center = boundingBox.getCenter();
-
         blades.position.x = -9.5;
 		blades.position.z = -7.5;
 		blades.position.y = 12.6;
@@ -70,8 +66,8 @@ function init() {
 	light.position.set( 20, 75, 50 );
 	scene.add( light );
 
-	renderer = new THREE.WebGLRenderer({ alpha:true });
-	renderer.setPixelRatio( window.devicePixelRatio*0.75 );
+	renderer = new THREE.WebGLRenderer();
+	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 
 	container.appendChild( renderer.domElement );

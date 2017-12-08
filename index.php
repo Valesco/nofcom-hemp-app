@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="assets/icons/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/stylesheet.css">
         <script type="text/javascript" src="script/engine/three.min.js"></script>
+        <script type="text/javascript" src="script/engine/SimplifyModifier.js"></script>
         <script type="text/javascript" src="script/engine/ColladaLoader2.js"></script>
     </head>
     <body>
@@ -88,6 +89,9 @@
 
                         </div>
                         <h3 id="username_show"></h3>
+                        <div class="chosen_button" id="back_to_login">
+                            <p>Terug naar menu</p>
+                        </div>
                     </div>
                     <div class="lobby_admin">
                         <h1>Lobby</h1>
@@ -98,18 +102,28 @@
                         <div class="chosen_button" id="chosen_new_group">
                             <p>Nieuwe groep aanmaken</p>
                         </div>
+                        <h3 id="adminname_show"></h3>
+                        <div class="chosen_button" id="back_to_login_admin">
+                            <p>Terug naar menu</p>
+                        </div>
                     </div>
                 </div>
                 <div class="dark_overlay pre_new_user_prompt_container">
                     <div class="pre_new_user_prompt">
                         <h1 id="pre_new_user_prompt_text"></h1>
-                        <h1>Als beheerder heb je een code nodig</h1>
+                        <h1 id="admin_code_title">Als beheerder heb je een code nodig</h1>
                         <div class="chosen_button_container">
                             <div class="chosen_button" id="user_chosen_yes">
                                 <p>Beheerder</p>
                             </div>
                             <div class="chosen_button" id="user_chosen_no">
                                 <p>Deelnemer</p>
+                            </div>
+                            <div class="chosen_button" id="user_chosen_menu">
+                                <p>Terug naar menu</p>
+                            </div>
+                            <div class="chosen_button" id="user_chosen_logout">
+                                <p>Uitloggen</p>
                             </div>
                         </div>
                     </div>
@@ -200,6 +214,9 @@
                         <div id="categories_alone">
                             <p>Ik snap het</p>
                         </div>
+                        <div class="back_to_start_button">
+                            <p>Terug naar startscherm</p>
+                        </div>
                     </div>
                 </div>
                 <div class="dark_overlay alone_select_categories_container">
@@ -210,6 +227,9 @@
                         </div>
                         <div id="alone">
                             <p>Ik wil spelen!</p>
+                        </div>
+                        <div class="back_to_explain_button">
+                            <p>Terug naar uitleg</p>
                         </div>
                     </div>
                 </div>

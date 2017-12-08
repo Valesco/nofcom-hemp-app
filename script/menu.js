@@ -58,7 +58,7 @@ window.onload = function() {
 	}
 
 	function eraseCookie(name) {
-		createCookie(name,"",-1);
+		createCookie(name,'=; Max-Age=0');
 	}
 
 	function hideAllLogosExceptPara(show) {
@@ -125,21 +125,35 @@ window.onload = function() {
 		hideAllLogosExceptPara(1);
 	}
 
-	document.getElementsByClassName("back_to_start_button")[0].onclick = function() {
-		document.getElementById("explain_group").style.display="none";
-		document.getElementById("explain_part").style.display="none";
-		document.getElementById("explain_alone").style.display="none";
-		document.getElementsByClassName("explain_container")[0].style.display="none";
-		document.getElementById("start_menu").style.display="block";
-		hideAllLogosExceptPara(3);
+	document.getElementsByClassName("back_to_explain_button")[0].onclick = function() {
+		document.getElementsByClassName("alone_select_categories_container")[0].style.display="none";
+		document.getElementsByClassName("explain_container")[0].style.display="block";
+		document.getElementById("explain_alone").style.display="block";
+	}
+
+	for(var i = 0; i < document.getElementsByClassName("back_to_start_button").length; i++) {
+		document.getElementsByClassName("back_to_start_button")[i].onclick = function() {
+			document.getElementById("explain_group").style.display="none";
+			document.getElementById("explain_part").style.display="none";
+			document.getElementById("explain_alone").style.display="none";
+			document.getElementsByClassName("explain_container")[0].style.display="none";
+
+			document.getElementById("start_menu").style.display="block";
+			hideAllLogosExceptPara(3);
+		}
 	}
 
 	document.getElementById("play_group").onclick = function() {
+		console.log("HERE");
 		document.getElementById("start_menu").style.display="none";
 		document.getElementsByClassName("pre_new_user_prompt_container")[0].style.display="block";
 		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
 		if (readCookie('name') != null) {
+			document.getElementById("user_chosen_yes").style.display="none";
+			document.getElementById("user_chosen_no").style.display="none";
+			document.getElementById("admin_code_title").innerHTML="";
 			document.getElementById("pre_new_user_prompt_text").innerHTML = "Welkom terug: "+readCookie('name');
+			checkAdmin(readCookie('token'));
 		} else {
 			document.getElementById("pre_new_user_prompt_text").innerHTML = "Welkom";
 		}
@@ -344,6 +358,25 @@ window.onload = function() {
 		}
 	}
 */
+
+	document.getElementById("user_chosen_logout").onclick = function() {
+		eraseCookie('name');
+		eraseCookie('token');
+		location.reload(-1);
+	}
+
+	document.getElementById("back_to_login").onclick = function() {
+		location.reload(-1);
+	}
+
+	document.getElementById("user_chosen_menu").onclick = function() {
+		location.reload(-1);
+	}
+
+	document.getElementById("user_chosen_menu").onclick = function() {
+		location.reload(-1);
+	}
+
 	document.getElementById("chosen_username").onclick = function() {
 		document.getElementById("chosen_username").style.display="none";
 		var leadername = document.getElementById("leadername").value;
@@ -397,6 +430,54 @@ window.onload = function() {
 		document.getElementsByClassName("question_container")[0].style.display="none";
 	}
 
+	function getAdminByUserToken(token) {
+		var httpRequest = new XMLHttpRequest();
+		var answer_return;
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=getAdminByUserToken&token='+token);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					console.log(answer_return);
+					document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als deelnemer. <br> Je beheerder is: "+answer_return;
+				}
+			}
+		}
+	}
+
+	function checkAdmin(token) {
+		var httpRequest = new XMLHttpRequest();
+		var answer_return;
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=validateAdmin&token='+token);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					console.log(answer_return);
+					if (answer_return == "is_admin") {
+						document.getElementById("user_chosen_yes").style.display="block";
+						document.getElementById("user_chosen_yes").style.width="100%";
+						document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als beheerder";
+					} else {
+						document.getElementById("user_chosen_no").style.display="block";
+						document.getElementById("user_chosen_no").style.width="100%";
+						document.getElementById("admin_code_title").innerHTML="";
+						document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als deelnemer";
+						getAdminByUserToken(readCookie('token'));
+					}
+				}
+			}
+		}
+	}
+
 	function validateAdmin(token) {
 		var httpRequest = new XMLHttpRequest();
 		var answer_return;
@@ -433,6 +514,7 @@ window.onload = function() {
 	function getGroups() {
 		setWaitingToTrue();
 		document.getElementById("username_show").innerHTML = "Ingelogd als: "+readCookie('name');
+		document.getElementById("adminname_show").innerHTML = "Ingelogd als: "+readCookie('name');
 		var httpRequest = new XMLHttpRequest();
 		if(!httpRequest) return false;
 		httpRequest.onreadystatechange = validate;
@@ -755,7 +837,7 @@ window.onload = function() {
 		} else if (glob_group_id != -1 && frontadmin == 0) {
 			document.getElementsByClassName("inner_pos_score")[0].innerHTML = score+" van de "+amount_of_questions+" punten";
 		} else if (glob_group_id != -1 && frontadmin == 1) {
-			showAdminScores();
+			showAdminScores(amount_of_questions);
 		}
 	}
 
@@ -774,11 +856,12 @@ window.onload = function() {
 				if (httpRequest.status === 200) {
 					document.getElementsByClassName("inner_pos_score")[0].innerHTML = "";
 					document.getElementsByClassName("inner_pos_score")[0].style.fontSize = "18px";
+					document.getElementsByClassName("parrot")[0].style.display = "none";
 					answer_return = httpRequest.responseText;
 					var user_scores = answer_return.split('|');
 					for(var i = 0; i < user_scores.length; i++) {
 						if(user_scores[i] != "") {
-							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div>"+user_scores[i]+"</div>";
+							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div>"+user_scores[i]+" / "+amount_of_questions+"</div>";
 						}
 						//console.log(user_scores[i]);
 					}
@@ -787,7 +870,7 @@ window.onload = function() {
 				}
 				if (stopRequestingLobbyEndScores == 0) {
 					delay(function(){
-						showAdminScores();
+						showAdminScores(amount_of_questions);
 						//console.log("ping");
 					}, 100 );
 				}
