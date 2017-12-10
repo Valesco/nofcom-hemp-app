@@ -377,6 +377,11 @@ window.onload = function() {
 		location.reload(-1);
 	}
 
+	document.getElementById("back_to_login_admin").onclick = function() {
+		location.reload(-1);
+	}
+
+
 	document.getElementById("chosen_username").onclick = function() {
 		document.getElementById("chosen_username").style.display="none";
 		var leadername = document.getElementById("leadername").value;

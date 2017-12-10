@@ -23,7 +23,6 @@
     		}
         }
 
-        // Magic method clone is empty to prevent duplication of connection
 	    private function __clone() { }
 
         public function getConnection() {

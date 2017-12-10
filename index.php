@@ -119,11 +119,11 @@
                             <div class="chosen_button" id="user_chosen_no">
                                 <p>Deelnemer</p>
                             </div>
-                            <div class="chosen_button" id="user_chosen_menu">
-                                <p>Terug naar menu</p>
-                            </div>
                             <div class="chosen_button" id="user_chosen_logout">
                                 <p>Uitloggen</p>
+                            </div>
+                            <div class="chosen_button" id="user_chosen_menu">
+                                <p>Terug naar menu</p>
                             </div>
                         </div>
                     </div>
@@ -213,9 +213,6 @@
                         </div>
                         <div id="categories_alone">
                             <p>Ik snap het</p>
-                        </div>
-                        <div class="back_to_start_button">
-                            <p>Terug naar startscherm</p>
                         </div>
                     </div>
                 </div>
