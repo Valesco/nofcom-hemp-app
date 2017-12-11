@@ -192,6 +192,7 @@ body {
     z-index: 20;
     position: absolute;
     top: 0px;
+    display: none;
     margin: 0;
     width: 100%;
     min-height: 100%;
@@ -210,6 +211,7 @@ body {
     background-color: #313131;
     border-radius: 10px;
     padding: 20px;
+    font-size: 18px;
 }
 
 .code_age_input {
@@ -220,6 +222,43 @@ body {
     padding: 10px;
     margin-top: 10px;
     font-size: 16px;
+}
+
+.edit_container {
+    width: 85%;
+    min-height:200px;
+    margin: 0 auto;
+    margin-top: -15px;
+    border: 1px solid #afafaf;
+    border-radius: 10px;
+    background-color: #d9d9d9;
+    padding: 10px;
+}
+
+.category_inner {
+    width:100%;
+}
+
+.category {
+    padding-left:0px;
+    border: 1px solid #afafaf;
+    padding: 5px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.question {
+    padding: 3px;
+    padding-left:10px;
+    border-bottom: 1px solid #b0b0b0;
+}
+
+.answer {
+    padding-left:15px;
+}
+
+#categories_container {
+    display:none;
 }
 
 #main_menu {

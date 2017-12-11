@@ -302,6 +302,8 @@ body {
     /* top: 40%; */
     max-height: 70%;
     margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
     width: 80%;
     border: 1px solid #6b99be;
     border-radius: 10px;
@@ -309,7 +311,7 @@ body {
     font-size: 32px;
     /* display: inline-block; */
     overflow-y: scroll;
-    transform: translateY(-55%);
+    /* transform: translateY(-55%); */
 }
 
 .inner_pos_score div {
@@ -370,7 +372,7 @@ body {
 
 .chosen_button p {
     text-align:center;
-    padding: 10px 0px 10px 0px !important;
+    padding: 10px !important;
     margin: 10px;
     font-size: 18px;
 }
@@ -978,6 +980,7 @@ input {
 #chosen_username {
     cursor:pointer;
     background-color: #067ea0;
+    padding: 1px;
     width:100%;
 }
 
@@ -1192,14 +1195,21 @@ input {
 
 #back_to_login_admin {
     width:100%;
-    padding-top:1px;
-    padding-bottom:1px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 #back_to_login {
     width:100%;
     padding-top:1px;
     padding-bottom:1px;
+}
+
+#chosen_username_back {
+    width:100%;
+    background-color: #565656;
+    margin-top: 10px;
+    padding: 1px;
 }
 
 .back_to_explain_button {

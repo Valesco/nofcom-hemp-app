@@ -99,10 +99,10 @@
                         <div class="lobby_item_list">
 
                         </div>
+                        <h3 id="adminname_show"></h3>
                         <div class="chosen_button" id="chosen_new_group">
                             <p>Nieuwe groep aanmaken</p>
                         </div>
-                        <h3 id="adminname_show"></h3>
                         <div class="chosen_button" id="back_to_login_admin">
                             <p>Terug naar menu</p>
                         </div>
@@ -146,6 +146,9 @@
                         <input id="leadercode" placeholder="code" type="text">
                         <div class="chosen_button" id="chosen_username">
                             <p>Aanmelden</p>
+                        </div>
+                        <div class="chosen_button" id="chosen_username_back">
+                            <p>Terug</p>
                         </div>
                     </div>
                 </div>
@@ -208,11 +211,11 @@
                             Deze app is een online mobile trivia game waar je vragen over de polder, molen, geschiedenis, flora en fauna moet beantwoorden.<br><br>Als een Groepsleider heb je mogelijkheid om een groep aan te maken waar Deelnemers zich aan kunnen sluiten.<br><br>
                             Stel je kennis van de Hempensermeerpolder op de proef met uitdagende vragen!
                         </div>
-                        <div class="back_to_start_button">
-                            <p>Terug naar startscherm</p>
-                        </div>
                         <div id="categories_alone">
                             <p>Ik snap het</p>
+                        </div>
+                        <div class="back_to_start_button">
+                            <p>Terug naar startscherm</p>
                         </div>
                     </div>
                 </div>

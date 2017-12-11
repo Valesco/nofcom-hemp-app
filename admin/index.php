@@ -26,7 +26,7 @@
                 </div>
                 <div id="prompt">
                     <h1 class="prompt_title" id="prompt_text">Test text</h1>
-                    <div class="button sub_button return unselectable hide">Terug</div>
+                    <div class="button sub_button return unselectable hide" id="remove_prompt">Terug</div>
                 </div>
             </div>
         </div>
@@ -35,8 +35,8 @@
 
             <div class="inner_container" id="login_menu">
                 <h3 class="sub_title">Login</h3>
-                <input type="text" class="login_input" placeholder="Gebruikersnaam">
-                <input type="password" class="login_input" placeholder="Wachtwoord">
+                <input type="text" class="login_input" id="gebruikersnaam" placeholder="Gebruikersnaam">
+                <input type="password" class="login_input" id="wachtwoord" placeholder="Wachtwoord">
                 <div class="button sub_button unselectable" id="login">Inloggen</div>
             </div>
 
@@ -49,23 +49,23 @@
 
             <div class="inner_container" id="code_menu">
                 <h3 class="sub_title">Code generen</h3>
-                <input class="code_input" value="0000" readonly>
+                <input class="code_input" id="unique_code" value="0000" readonly>
                 <div class="button unselectable" id="generate_code">Genereer nieuwe code</div>
-                <div class="button unselectable" id="to_admin_menu">Registreer beheerder</div>
+                <div class="button unselectable" id="to_admin_menu">Nieuwe groepsleider registreren</div>
                 <div class="button sub_button return unselectable return_to_main">Terug naar menu</div>
                 <div class=""></div>
             </div>
 
             <div class="inner_container" id="admin_menu">
-                <h3 class="sub_title">Registreer beheerder</h3>
-                <input type="text" class="code_dn_input" placeholder="Voornaam">
-                <input type="text" class="code_dn_input" placeholder="Achternaam">
+                <h3 class="sub_title">Nieuwe groepsleider registreren</h3>
+                <input type="text" class="code_dn_input" id="voornaam" placeholder="Voornaam">
+                <input type="text" class="code_dn_input" id="achternaam" placeholder="Achternaam">
                 <div class="age_container">
-                    <input type="text" class="code_age_input" placeholder="Dag">
-                    <input type="text" class="code_age_input" placeholder="Maand">
-                    <input type="text" class="code_age_input" placeholder="Jaar">
+                    <input type="tel" class="code_age_input" maxlength="2" id="age_d" placeholder="Dag">
+                    <input type="tel" class="code_age_input" maxlength="2" id="age_m" placeholder="Maand">
+                    <input type="tel" class="code_age_input" maxlength="4" id="age_y" placeholder="Jaar">
                 </div>
-                <input type="text" class="code_dn_input" placeholder="Code" value="0000" readonly>
+                <input type="text" class="code_dn_input" placeholder="Code" id="register_unique_code" value="0000" readonly>
                 <div class="button sub_button unselectable" id="register_admin">Registreer beheerder</div>
                 <div class="button sub_button return unselectable" id="to_code_menu_admin">Terug</div>
                 <div class=""></div>
@@ -73,7 +73,10 @@
 
             <div class="inner_container" id="app_menu">
                 <h3 class="sub_title">App beheren</h3>
-                <div class="button unselectable">Categorieën, vragen en antwoorden</div>
+                <div class="button unselectable" id="show_edit_button">Categorieën, vragen en antwoorden</div>
+                <div class="edit_container" id="categories_container">
+
+                </div>
                 <div class="button unselectable">Gebruikers</div>
                 <div class="button sub_button return unselectable return_to_main">Terug naar menu</div>
             </div>

@@ -92,7 +92,7 @@ window.onload = function() {
 		document.getElementById("start_menu").style.display="none";
 		document.getElementsByClassName("explain_container")[0].style.display="block";
 		document.getElementById("explain_alone").style.display="block";
-		document.getElementsByClassName("back_to_start_button")[0].style.display="none";
+		document.getElementsByClassName("back_to_start_button")[0].style.display="block";
 		document.getElementById("alone").style.display="block";
 		document.getElementById("categories_alone").style.display="block";
 		hideAllLogosExceptPara(2);
@@ -143,8 +143,14 @@ window.onload = function() {
 		}
 	}
 
+	document.getElementById("chosen_username_back").onclick = function() {
+		document.getElementsByClassName("pre_new_user_prompt_container")[0].style.display="block";
+		document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
+		document.getElementById("leadercode_title").style.display="block";
+		document.getElementById("leadercode").style.display="block";
+	}
+
 	document.getElementById("play_group").onclick = function() {
-		console.log("HERE");
 		document.getElementById("start_menu").style.display="none";
 		document.getElementsByClassName("pre_new_user_prompt_container")[0].style.display="block";
 		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
@@ -153,9 +159,11 @@ window.onload = function() {
 			document.getElementById("user_chosen_no").style.display="none";
 			document.getElementById("admin_code_title").innerHTML="";
 			document.getElementById("pre_new_user_prompt_text").innerHTML = "Welkom terug: "+readCookie('name');
+			document.getElementById("user_chosen_logout").style.display="block";
 			checkAdmin(readCookie('token'));
 		} else {
 			document.getElementById("pre_new_user_prompt_text").innerHTML = "Welkom";
+			document.getElementById("user_chosen_logout").style.display="none";
 		}
 	}
 
@@ -183,6 +191,7 @@ window.onload = function() {
 
 	document.getElementById("user_chosen_yes").onclick = function() {
 		//console.log(active_user);
+		document.getElementById("new_user_prompt_title").innerHTML="Inloggen als beheerder";
 		document.getElementById("leadername_title").style.display="none";
 		document.getElementById("leadername").style.display="none";
 		document.getElementById("leadersurname").style.display="none";
@@ -328,36 +337,6 @@ window.onload = function() {
 			}
 		}
 	}
-
-
-	/*
-	function next_date() {
-		container.onkeyup = function(e) {
-		    var target = e.srcElement || e.target;
-		    var maxLength = parseInt(target.attributes["maxlength"].value, 10);
-		    var myLength = target.value.length;
-		    if (myLength >= maxLength) {
-		        var next = target;
-		        while (next = next.nextElementSibling) {
-		            if (next == null) break;
-		            if (next.tagName.toLowerCase() === "input") {
-		                next.focus();
-		                break;
-		            }
-		        }
-		    } else if (myLength === 0) {
-		        var previous = target;
-		        while (previous = previous.previousElementSibling) {
-		            if (previous == null) break;
-		            if (previous.tagName.toLowerCase() === "input") {
-		                previous.focus();
-		                break;
-		            }
-		        }
-		    }
-		}
-	}
-*/
 
 	document.getElementById("user_chosen_logout").onclick = function() {
 		eraseCookie('name');
