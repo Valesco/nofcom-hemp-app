@@ -20,6 +20,22 @@
         </div>
         <div class="overlay_container">
             <div class="dark_inner_container">
+                <div id="remove_question">
+                    <h1 class="prompt_title">Weet u zeker dat u deze vraag wilt verwijderen?</h1>
+                    <h1 class="prompt_title" id="question_text"></h1>
+                    <div class="button sub_button return unselectable" id="remove_question_button">Ja</div>
+                    <div class="button sub_button return unselectable hide red">Nee</div>
+                </div>
+                <div id="add_cat">
+                    <h1 class="prompt_title">Vraag toevoegen</h1>
+                    <input class="input_add input_vraag" id="question_title" type="text" placeholder="Vraag">
+                    <input class="input_add input_antwoord" id="answer_0" type="text" placeholder="Antwoord 1"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_0">
+                    <input class="input_add input_antwoord" id="answer_1" type="text" placeholder="Antwoord 2"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_1">
+                    <input class="input_add input_antwoord" id="answer_2" type="text" placeholder="Antwoord 3"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_2">
+                    <input class="input_add input_antwoord" id="answer_3" type="text" placeholder="Antwoord 4"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_3">
+                    <div class="button sub_button return unselectable" id="add_cat_button">Toevoegen</div>
+                    <div class="button sub_button return unselectable hide">Terug</div>
+                </div>
                 <div id="loading">
                     <img src="../assets/img/loader.gif" class="prompt_img">
                     <h1 class="prompt_title">Loading..</h1>
@@ -32,7 +48,6 @@
         </div>
         <div class="container">
             <h3 class="text-center">CMS Hempensermeerpolder App</h3>
-
             <div class="inner_container" id="login_menu">
                 <h3 class="sub_title">Login</h3>
                 <input type="text" class="login_input" id="gebruikersnaam" placeholder="Gebruikersnaam">
@@ -80,6 +95,7 @@
                 <div class="button unselectable">Gebruikers</div>
                 <div class="button sub_button return unselectable return_to_main">Terug naar menu</div>
             </div>
+
         </div>
     </body>
 </html>

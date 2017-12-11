@@ -584,18 +584,6 @@
         }
 
         function randomCharacters() {
-            /*
-            $db = CallFunctions::getInstance();
-            $mysqli = $db->getConnection();
-            $session_token = $mysqli->real_escape_string($_GET['token']);
-            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
-                if($result_answer->num_rows > 0) {
-                    echo $rand = substr(uniqid('', true), -5);
-                } else {
-                    echo "no_admin";
-                }
-            }
-            */
             echo $rand = substr(uniqid('', true), -4);
         }
 
@@ -615,25 +603,76 @@
             }
         }
 
+        function removeQuestion() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
+            $question_id = $mysqli->real_escape_string($_GET['question_id']);
+
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
+                if($result_answer->num_rows > 0) {
+                    $mysqli->query("DELETE FROM questions WHERE id = '$question_id'");
+                    $mysqli->query("DELETE FROM answers WHERE question_id = '$question_id'");
+                }
+            }
+        }
+
+        function addQuestion() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
+            $cat_id = $mysqli->real_escape_string($_GET['cat_id']);
+            $is_correct = $mysqli->real_escape_string($_GET['is_correct']);
+            $question = $mysqli->real_escape_string($_GET['question']);
+            $answer_0 = $mysqli->real_escape_string($_GET['answer_0']);
+            $answer_1 = $mysqli->real_escape_string($_GET['answer_1']);
+            $answer_2 = $mysqli->real_escape_string($_GET['answer_2']);
+            $answer_3 = $mysqli->real_escape_string($_GET['answer_3']);
+            $answer_array = [$answer_0,$answer_1,$answer_2,$answer_3];
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
+                if($result_answer->num_rows > 0) {
+                    if($mysqli->query("INSERT INTO questions (cat_id, question) VALUES ('$cat_id', '$question')")) {
+                        $temp_new_id = $mysqli->insert_id;
+                        for ($i = 0; $i < count($answer_array); $i++) {
+                            if ($i == $is_correct) {
+                                $mysqli->query("INSERT INTO answers (question_id, answer, is_correct) VALUES ('$temp_new_id', '$answer_array[$i]', '1')");
+                            } else {
+                                $mysqli->query("INSERT INTO answers (question_id, answer, is_correct) VALUES ('$temp_new_id', '$answer_array[$i]', '0')");
+                            }
+                        }
+                    } else {
+                        echo mysqli_error($mysqli);
+                    }
+                }
+            } else {
+                echo mysqli_error($mysqli);
+            }
+        }
+
         function getCategoriesQuestionsAnswers() {
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
 
-            if ($result_categories = $mysqli->query("SELECT * FROM categories")) {
-                $row_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
-                for($k = 0; $k < $result_categories->num_rows; $k++) {
-                    $cat_id = $row_categories[$k]["id"];
-                    if ($k > 0) echo "&";
-                    echo $cat_id."=".$row_categories[$k]["category_name"];
-                    if ($result_question = $mysqli->query("SELECT * FROM questions WHERE cat_id='$cat_id'")) {
-                        $row_question = mysqli_fetch_all($result_question, MYSQLI_ASSOC);
-                        for($j = 0; $j < $result_question->num_rows; $j++) {
-                            echo "?".$row_question[$j]["id"]."=".$row_question[$j]["question"];
-                            $question_id = $row_question[$j]["id"];
-                            if($result_answer = $mysqli->query("SELECT * FROM answers WHERE question_id = '$question_id'")) {
-                                $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
-                                for ($i = 0; $i < $result_answer->num_rows; $i++) {
-                                    echo "|".$row[$i]["id"]."=".$row[$i]["answer"].":".$row[$i]["is_correct"];
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
+                if($result_answer->num_rows > 0) {
+                    if ($result_categories = $mysqli->query("SELECT * FROM categories")) {
+                        $row_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
+                        for($k = 0; $k < $result_categories->num_rows; $k++) {
+                            $cat_id = $row_categories[$k]["id"];
+                            if ($k > 0) echo "&";
+                            echo $cat_id."=".$row_categories[$k]["category_name"];
+                            if ($result_question = $mysqli->query("SELECT * FROM questions WHERE cat_id='$cat_id'")) {
+                                $row_question = mysqli_fetch_all($result_question, MYSQLI_ASSOC);
+                                for($j = 0; $j < $result_question->num_rows; $j++) {
+                                    echo "*".$row_question[$j]["id"]."=".$row_question[$j]["question"].";";
+                                    $question_id = $row_question[$j]["id"];
+                                    if($result_answer = $mysqli->query("SELECT * FROM answers WHERE question_id = '$question_id'")) {
+                                        $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+                                        for ($i = 0; $i < $result_answer->num_rows; $i++) {
+                                            echo "|".$row[$i]["id"]."=".$row[$i]["answer"].":".$row[$i]["is_correct"];
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -672,7 +711,9 @@
         "loginAjax",
         "randomCharacters",
         "createAdmin",
-        "getCategoriesQuestionsAnswers"
+        "getCategoriesQuestionsAnswers",
+        "addQuestion",
+        "removeQuestion"
     ];
 
     if(isset($_GET['function']) && in_array($_GET['function'], $functions_array)) {
