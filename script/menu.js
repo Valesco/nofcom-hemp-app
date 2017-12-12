@@ -172,6 +172,9 @@ window.onload = function() {
 		document.getElementById("new_user_prompt_title").innerHTML="Inloggen als deelnemer";
 		document.getElementById("leadercode_title").style.display="none";
 		document.getElementById("leadercode").style.display="none";
+		document.getElementById("leadername_title").style.display="block";
+		document.getElementById("leadername").style.display="block";
+		document.getElementById("leadersurname").style.display="block";
 		if (active_user == 1) {
 			document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
 			document.getElementsByClassName("lobby_container")[0].style.display="block";

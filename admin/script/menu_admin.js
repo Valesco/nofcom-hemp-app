@@ -23,12 +23,6 @@ window.onload = function() {
         toCodeMenu();
     }
 
-    document.getElementById("show_edit_button").onclick = function() {
-        document.getElementById("show_edit_button").style.display="none";
-        validateAdmin();
-        showEdit();
-    }
-
     document.getElementById("remove_prompt").onclick = function() {
         hidePrompt();
     }
@@ -36,6 +30,8 @@ window.onload = function() {
     document.getElementById("to_app_menu").onclick = function() {
         validateAdmin();
         toAppMenu();
+        showEdit();
+        getUsers();
     }
 
     document.getElementById("to_admin_menu").onclick = function() {
@@ -122,21 +118,29 @@ window.onload = function() {
 
     function showPrompt(text,add) {
         document.getElementsByClassName("overlay_container")[0].style.display="block";
-        if (add == false) {
+        if (add == "prompt") {
             document.getElementById("loading").style.display="none";
             document.getElementById("prompt").style.display="block";
             document.getElementById("remove_question").style.display="none";
+            document.getElementById("remove_user").style.display="none";
             document.getElementById("prompt_text").innerHTML=text;
-        } else if (add == true) {
+        } else if (add == "add_question") {
             document.getElementById("loading").style.display="none";
             document.getElementById("add_cat").style.display="block";
             document.getElementById("remove_question").style.display="none";
+            document.getElementById("remove_user").style.display="none";
             document.getElementById("question_title").focus();
+        } else if (add="remove_user")  {
+            document.getElementById("loading").style.display="none";
+            document.getElementById("add_cat").style.display="none";
+            document.getElementById("remove_question").style.display="none";
+            document.getElementById("remove_user").style.display="block";
         } else {
             document.getElementById("loading").style.display="none";
             document.getElementById("add_cat").style.display="none";
             document.getElementById("prompt").style.display="none";
             document.getElementById("remove_question").style.display="block";
+            document.getElementById("remove_user").style.display="none";
             document.getElementById("question_text").innerHTML=text;
         }
     }
@@ -156,33 +160,40 @@ window.onload = function() {
     }
 
     function showEdit() {
-        if(document.getElementById("categories_container").style.display == "block") {
-            document.getElementById("categories_container").style.display = "none";
-        } else {
-            document.getElementById("categories_container").style.display = "block"
-        }
+        document.getElementById("categories_container").style.display = "block";
         getCategoriesQuestionsAnswers();
     }
 
-    function addQuestionPrompt(category_id) {
-        showPrompt("",true);
-        for(var i = 0; i < 4; i++) {
-            document.getElementsByClassName("checkbox_answer")[i].checked=false;
-            document.getElementsByClassName("input_antwoord")[i].value="";
+    function addQuestionPrompt(category_id,edit,question_id) {
+        showPrompt("","add_question");
+        var temp_question_id = -1;
+        console.log(category_id,edit);
+        if (!edit) {
+            document.getElementById("add_cat_button").innerHTML="Toevoegen";
+            for(var i = 0; i < 4; i++) {
+                document.getElementsByClassName("checkbox_answer")[i].checked=false;
+                document.getElementsByClassName("input_antwoord")[i].value="";
+            }
+            document.getElementById("question_title").value = "";
+        } else {
+            temp_question_id = question_id;
+            document.getElementById("add_cat_button").innerHTML="Wijzigen";
         }
-        document.getElementById("question_title").value = "";
         document.getElementById("add_cat_button").onclick = function() {
-            addQuestion(category_id);
+            addQuestion(category_id,question_id);
         }
     }
 
-    function addQuestion(category_id) {
+    function addQuestion(category_id,question_id) {
         showLoadingOverlay();
         var httpRequest = new XMLHttpRequest();
 		if(!httpRequest) return false;
 
         var is_correct = 0;
 
+        if (question_id != -1) {
+            removeQuestion(question_id,true);
+        }
         for(var i = 0; i < 4; i++) {
             if(document.getElementById("checkbox_"+i).checked) {
                 is_correct = document.getElementById("checkbox_"+i).id;
@@ -213,14 +224,42 @@ window.onload = function() {
         }
     }
 
-    function removePrompt(question_title, question_id) {
-        showPrompt(question_title,question_id);
-        document.getElementById("remove_question_button").onclick = function() {
-            removeQuestion(question_id);
+    function removeUserPrompt(user_id) {
+        showPrompt(user_id,"remove_user");
+        document.getElementById("remove_user_button").onclick = function() {
+            removeUser(user_id);
         }
     }
 
-    function removeQuestion(question_id) {
+    function removeUser(user_id) {
+        showLoadingOverlay();
+        var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','../controller.php?function=removeUser&session_token='+readCookie('session_token')+'&user_id='+user_id);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+                    answer_return = httpRequest.responseText;
+                    console.log(answer_return);
+                    hideLoading();
+                    getUsers();
+                }
+            }
+        }
+    }
+
+    function removePrompt(question_title, question_id) {
+        showPrompt(question_title,question_id);
+        document.getElementById("remove_question_button").onclick = function() {
+            removeQuestion(question_id,false);
+        }
+    }
+
+    function removeQuestion(question_id,edit) {
         showLoadingOverlay();
 		var httpRequest = new XMLHttpRequest();
 		if(!httpRequest) return false;
@@ -236,10 +275,54 @@ window.onload = function() {
                     answer_return = httpRequest.responseText;
                     console.log(answer_return);
                     hideLoading();
-                    getCategoriesQuestionsAnswers();
+                    if (!edit) {
+                        getCategoriesQuestionsAnswers();
+                    }
                 }
             }
         }
+    }
+
+    function getUsers() {
+        document.getElementById("users_container").innerHTML = "";
+        var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','../controller.php?function=getAllUsers&session_token='+readCookie('session_token'));
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+                    var container = document.getElementById("users_container");
+                    answer_return = httpRequest.responseText;
+                    var users = answer_return.split("|");
+                    for (var i = 1; i < users.length; i++) {
+                        if (users[i].split("=")[1].split("?")[0] == "1") {
+                            container.innerHTML += "<div style='background-color:#c7d1ec;' class='single_user' id='user_"+users[i].split("=")[0]+"'><input type='checkbox'><h1 class='remove_user'>X</h1><p>"+users[i].split("=")[1].split("?")[1].split(":")[0]+"</p><p>"+users[i].split("=")[1].split("?")[1].split(":")[1]+"</p></div>";
+                        } else {
+                            container.innerHTML += "<div class='single_user' id='user_"+users[i].split("=")[0]+"'><input type='checkbox'><h1 class='remove_user'>X</h1><p>"+users[i].split("=")[1].split("?")[1].split(":")[0]+"</p><p>"+users[i].split("=")[1].split("?")[1].split(":")[1]+"</p></div>";
+                        }
+                    }
+
+                    for(var i = 0; i < document.getElementsByClassName("remove_user").length; i++) {
+                        document.getElementsByClassName("remove_user")[i].onclick = function(e) {
+                            var user_id = e.srcElement.parentNode.id.split("_")[1];
+                            document.getElementById("user_text").innerHTML = e.srcElement.parentNode.children[2].innerHTML.split(":")[0];
+                            removeUserPrompt(user_id);
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
+        <div class="edit_user_container">
+            <input type="checkbox">
+            <h1>X</h1>
+            <p>Pietsje</p>
+        </div> */
     }
 
     function getCategoriesQuestionsAnswers() {
@@ -277,6 +360,7 @@ window.onload = function() {
                                 content += "<div class='question' style='display:none;' id='question_"+questions[j].split(";")[0].split("=")[0]+"'><p>"+questions[j].split(";")[0].split("=")[1]+"</p>";
                                 content += "<div class='dropdown_button_question'>+</div>";
                                 content += "<div class='remove_button'>X</div>";
+                                content += "<div style='display:none;' id='edit_"+questions[j].split(";")[0].split("=")[0]+"' class='edit_question_button'>Bewerken</div>";
                             }
                             var answers = questions[j].split("|");
                             console.log(answers);
@@ -295,6 +379,31 @@ window.onload = function() {
                         edit_container.innerHTML += content;
                     }
 
+                    for(var i = 0; i < document.getElementsByClassName("edit_question_button").length; i++) {
+                        document.getElementsByClassName("edit_question_button")[i].onclick = function (e) {
+                            var question_id = e.srcElement.parentNode.id.split("_")[1];
+                            var category_id = e.srcElement.parentNode.parentNode.id.split("_")[1];
+                            var question_title = e.srcElement.parentNode.childNodes[0].innerHTML;
+                            var question_temp_counter = 0;
+                            for (var k = 0; k < e.srcElement.parentNode.children.length; k++) {
+                                if (e.srcElement.parentNode.children[k].className == "answer") {
+                                    document.getElementsByClassName("checkbox_answer")[question_temp_counter].checked=false;
+                                    document.getElementsByClassName("input_antwoord")[question_temp_counter].value=e.srcElement.parentNode.children[k].children[0].innerHTML;
+                                    console.log(e.srcElement.parentNode.children[k].children[0].innerHTML);
+                                    question_temp_counter++;
+                                } else if (e.srcElement.parentNode.children[k].className == "answer correct") {
+                                    document.getElementsByClassName("checkbox_answer")[question_temp_counter].checked=true;
+                                    document.getElementsByClassName("input_antwoord")[question_temp_counter].value=e.srcElement.parentNode.children[k].children[0].innerHTML;
+                                    console.log(e.srcElement.parentNode.children[k].children[0].innerHTML);
+                                    question_temp_counter++;
+                                }
+                            }
+                            document.getElementById("question_title").value = question_title;
+                            document.getElementById("prompt_title").innerHTML = e.srcElement.parentNode.parentNode.children[0].innerHTML;
+                            addQuestionPrompt(category_id,true,question_id);
+                        }
+                    }
+
                     for(var i = 0; i < document.getElementsByClassName("remove_button").length; i++) {
                         document.getElementsByClassName("remove_button")[i].onclick = function (e) {
                             var question_id = e.srcElement.parentNode.id.split("_")[1];
@@ -305,15 +414,16 @@ window.onload = function() {
 
                     for (var i = 0; i < document.getElementsByClassName("add_button").length; i++) {
                         document.getElementsByClassName("add_button")[i].onclick = function (e) {
-                            var category_id = e.srcElement.parentNode.id.split("_")[1]
-                            addQuestionPrompt(category_id);
+                            var category_id = e.srcElement.parentNode.id.split("_")[1];
+                            document.getElementById("prompt_title").innerHTML = e.srcElement.parentNode.children[0].innerHTML;
+                            addQuestionPrompt(category_id,false,-1);
                         }
                     }
 
                     for (var i = 0; i < document.getElementsByClassName("dropdown_button_question").length; i++) {
                         document.getElementsByClassName("dropdown_button_question")[i].onclick = function (e) {
                             for (var k = 0; k < e.srcElement.parentNode.children.length; k++) {
-                                if (e.srcElement.parentNode.children[k].className == "answer" || e.srcElement.parentNode.children[k].className == "answer correct") {
+                                if (e.srcElement.parentNode.children[k].className == "answer" || e.srcElement.parentNode.children[k].className == "answer correct" || e.srcElement.parentNode.children[k].className == "edit_question_button") {
                                     if (e.srcElement.parentNode.children[k].style.display == "none") {
                                         e.srcElement.innerHTML = "-";
                                         e.srcElement.parentNode.children[k].style.display = "block";
@@ -410,7 +520,7 @@ window.onload = function() {
                         document.getElementById("admin_menu").style.display="none";
                         document.getElementById("code_menu").style.display="block";
 
-                        showPrompt("Groepsleider aangemaakt.<br> De gegevens zijn: <br><br> Voornaam: <br> "+temp_name+" <br><br> Achternaam: <br> "+surname+" <br><br> Geboortedatum: <br> "+age_d+"-"+age_m+"-"+age_y+" <br><br> Code:<br> "+leadercode,false);
+                        showPrompt("Groepsleider aangemaakt.<br> De gegevens zijn: <br><br> Voornaam: <br> "+temp_name+" <br><br> Achternaam: <br> "+surname+" <br><br> Geboortedatum: <br> "+age_d+"-"+age_m+"-"+age_y+" <br><br> Code:<br> "+leadercode,"prompt");
 
                         document.getElementById("voornaam").value = "";
                         document.getElementById("achternaam").value = "";
@@ -419,7 +529,7 @@ window.onload = function() {
                         document.getElementById("age_y").value = "";
 					} else {
                         validateAdmin();
-                        showPrompt("Er is een fout opgetreden.",false);
+                        showPrompt("Er is een fout opgetreden.","prompt");
                         document.getElementById("voornaam").value = "";
                         document.getElementById("achternaam").value = "";
                         document.getElementById("age_d").value = "";

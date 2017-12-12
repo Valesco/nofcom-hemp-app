@@ -20,6 +20,12 @@
         </div>
         <div class="overlay_container">
             <div class="dark_inner_container">
+                <div id="remove_user">
+                    <h1 class="prompt_title">Weet u zeker dat u deze user wilt verwijderen?</h1>
+                    <h1 class="prompt_title" id="user_text"></h1>
+                    <div class="button sub_button return unselectable" id="remove_user_button">Ja</div>
+                    <div class="button sub_button return unselectable hide red">Nee</div>
+                </div>
                 <div id="remove_question">
                     <h1 class="prompt_title">Weet u zeker dat u deze vraag wilt verwijderen?</h1>
                     <h1 class="prompt_title" id="question_text"></h1>
@@ -27,7 +33,7 @@
                     <div class="button sub_button return unselectable hide red">Nee</div>
                 </div>
                 <div id="add_cat">
-                    <h1 class="prompt_title">Vraag toevoegen</h1>
+                    <h1 class="prompt_title" id="prompt_title">Vraag toevoegen</h1>
                     <input class="input_add input_vraag" id="question_title" type="text" placeholder="Vraag">
                     <input class="input_add input_antwoord" id="answer_0" type="text" placeholder="Antwoord 1"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_0">
                     <input class="input_add input_antwoord" id="answer_1" type="text" placeholder="Antwoord 2"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_1">
@@ -88,11 +94,13 @@
 
             <div class="inner_container" id="app_menu">
                 <h3 class="sub_title">App beheren</h3>
-                <div class="button unselectable" id="show_edit_button">Categorieën, vragen en antwoorden</div>
                 <div class="edit_container" id="categories_container">
 
                 </div>
-                <div class="button unselectable">Gebruikers</div>
+                <h3 class="sub_title">Gebruikers beheren</h3>
+                <div class="edit_user_container" id="users_container">
+
+                </div>
                 <div class="button sub_button return unselectable return_to_main">Terug naar menu</div>
             </div>
 

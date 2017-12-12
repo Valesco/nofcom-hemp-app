@@ -140,8 +140,8 @@
                         <input class="age_input" placeholder="maand" id="age_m" type="tel" maxlength="2">
                         <input class="age_input" placeholder="jaar" id="age_y" type="tel" maxlength="4">
                         <h1 id="leadername_title">Wat is de voor- en achternaam van je groepsleider?</h1>
-                        <input style="width: 48%; margin:1px;" placeholder="voornaam" id="leadername" type="text">
-                        <input style="width: 48%; margin:1px;" placeholder="achternaam" id="leadersurname" type="text">
+                        <input placeholder="Groepsleider voornaam" id="leadername" type="text">
+                        <input placeholder="Groepsleider achternaam" id="leadersurname" type="text">
                         <h1 id="leadercode_title">Voer de beheerderscode in</h1>
                         <input id="leadercode" placeholder="code" type="text">
                         <div class="chosen_button" id="chosen_username">

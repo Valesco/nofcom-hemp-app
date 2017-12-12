@@ -96,6 +96,7 @@ body {
     margin: 0 auto;
     padding: 5px 0px 10px 0px;
     border-bottom: 1px solid #d4d4d4;
+    margin-top: 10px;
 }
 
 .header {
@@ -230,7 +231,7 @@ body {
     width: 95%;
     min-height:200px;
     margin: 0 auto;
-    margin-top: 0px;
+    margin-top: 8px;
     border: 1px solid #afafaf;
     border-radius: 10px;
     background-color: #d9d9d9;
@@ -374,6 +375,72 @@ p {
 
 .red {
     background-color: #a92929;
+}
+
+.edit_question_button {
+    color: #ececec;
+    text-align: center;
+    background-color: #067ea0;
+    width: 75px;
+    margin: 0 auto;
+    padding: 3px;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.edit_user_container {
+    color: black;
+    border: 1px solid #ababab;
+    padding: 4px 4px 4px 4px;
+    background-color: white;
+    margin: 3px;
+    width: 95%;
+    min-height: 200px;
+    margin: 0 auto;
+    margin-top: 8px;
+    border: 1px solid #afafaf;
+    border-radius: 10px;
+    /* background-color: #d9d9d9; */
+    /* padding: 10px 0px 10px 0px; */
+}
+
+.edit_user_container h1 {
+    color: red;
+    font-size: 18px;
+    margin: 3px;
+    padding: 0;
+    float: left;
+    cursor: pointer;
+}
+
+.single_user {
+    margin-top: -1px;
+    width: 100%;
+    float: left;
+    border: 1px solid #ababab;
+}
+
+.edit_user_container input {
+    color: red;
+    float: right;
+    margin: 7px;
+    margin-right: 25px;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.single_user p {
+    float: left;
+    width: 30%;
+}
+
+#users_container {
+    height: 200px;
+    overflow-x: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #question_text {

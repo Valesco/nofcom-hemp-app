@@ -680,6 +680,25 @@
                 }
             }
         }
+
+        function getAllUsers () {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
+
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2' ORDER BY admin_level ASC")) {
+                if($result_answer->num_rows > 0) {
+                    if ($result_users = $mysqli->query("SELECT * FROM users")) {
+                        $row_users = mysqli_fetch_all($result_users, MYSQLI_ASSOC);
+                        for($k = 0; $k < $result_users->num_rows; $k++) {
+                            if ($row_users[$k]["admin_level"] != 2) {
+                                echo "|".$row_users[$k]["id"]."=".$row_users[$k]["admin_level"]."?".$row_users[$k]["user_name"]." ".$row_users[$k]["surname"].":".$row_users[$k]["age"]." ".$row_users[$k]["birthdate"];
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     $functions = new CallFunctions;
@@ -713,7 +732,8 @@
         "createAdmin",
         "getCategoriesQuestionsAnswers",
         "addQuestion",
-        "removeQuestion"
+        "removeQuestion",
+        "getAllUsers"
     ];
 
     if(isset($_GET['function']) && in_array($_GET['function'], $functions_array)) {
