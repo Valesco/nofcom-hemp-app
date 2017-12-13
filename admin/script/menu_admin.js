@@ -72,6 +72,7 @@ window.onload = function() {
         document.getElementById("loading").style.display="block";
         document.getElementById("prompt").style.display="none";
         document.getElementById("add_cat").style.display="none";
+        document.getElementById("remove_user").style.display="none";
         document.getElementById("remove_question").style.display="none";
     }
 
@@ -296,6 +297,7 @@ window.onload = function() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
                     var container = document.getElementById("users_container");
+                    container.innerHTML += "<h1 class='checkbox_all_users_text'>Alle gebruikers selecteren:</h1><input id='checkbox_all_users' type='checkbox'>";
                     answer_return = httpRequest.responseText;
                     var users = answer_return.split("|");
                     for (var i = 1; i < users.length; i++) {
@@ -313,16 +315,32 @@ window.onload = function() {
                             removeUserPrompt(user_id);
                         }
                     }
+
+                    document.getElementById("remove_all_users").onclick = function() {
+                        for (var i = 0; i < document.getElementsByClassName("single_user").length; i++) {
+                            if (document.getElementsByClassName("single_user")[i].children[0].checked) {
+                                var user_id = document.getElementsByClassName("single_user")[i].id.split("_")[1];
+                                document.getElementsByClassName("edit_user_container")[0].innerHTML="";
+                                removeUser(user_id);
+                            }
+                        }
+                    }
+
+                    document.getElementById("checkbox_all_users").onclick = function() {
+                        for (var i = 0; i < document.getElementsByClassName("single_user").length; i++) {
+                            //console.log(document.getElementById("checkbox_all_users").checked);
+                            if (document.getElementById("checkbox_all_users").checked) {
+                                console.log("check all");
+                                document.getElementsByClassName("single_user")[i].children[0].checked = true;
+                            } else {
+                                console.log("uncheck all");
+                                document.getElementsByClassName("single_user")[i].children[0].checked = false;
+                            }
+                        }
+                    }
                 }
             }
         }
-
-        /*
-        <div class="edit_user_container">
-            <input type="checkbox">
-            <h1>X</h1>
-            <p>Pietsje</p>
-        </div> */
     }
 
     function getCategoriesQuestionsAnswers() {

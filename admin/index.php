@@ -101,6 +101,7 @@
                 <div class="edit_user_container" id="users_container">
 
                 </div>
+                <h1 class='checkbox_all_users_text'>Geselecteerde gebruikers verwijderen:</h1><h1 id='remove_all_users'>X</h1>
                 <div class="button sub_button return unselectable return_to_main">Terug naar menu</div>
             </div>
 

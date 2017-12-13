@@ -459,6 +459,29 @@ p {
     display:none;
 }
 
+#checkbox_all_users {
+    float:right;
+    margin: 2px 24px 2px 2px;
+}
+
+.checkbox_all_users_text {
+    color: black !important;
+    font-size: 14px !important;
+    text-align: right !important;
+    width: 82% !important;
+    margin-top: 1px !important;
+    cursor: default !important;
+}
+
+#remove_all_users {
+    color:red;
+    float: right;
+    margin: -28px 35px 0px 0px;
+    padding: 0px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
 #main_menu {
     display: none;
 }

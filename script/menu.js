@@ -148,6 +148,7 @@ window.onload = function() {
 		document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
 		document.getElementById("leadercode_title").style.display="block";
 		document.getElementById("leadercode").style.display="block";
+		document.getElementById("chosen_username").style.display="block";
 	}
 
 	document.getElementById("play_group").onclick = function() {
