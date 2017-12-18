@@ -159,7 +159,7 @@ window.onload = function() {
 			document.getElementById("user_chosen_yes").style.display="none";
 			document.getElementById("user_chosen_no").style.display="none";
 			document.getElementById("admin_code_title").innerHTML="";
-			document.getElementById("pre_new_user_prompt_text").innerHTML = "Welkom terug: "+readCookie('name');
+			document.getElementById("pre_new_user_prompt_text").innerHTML = "Welkom terug: <br>"+readCookie('name');
 			document.getElementById("user_chosen_logout").style.display="block";
 			checkAdmin(readCookie('token'));
 		} else {
@@ -217,10 +217,6 @@ window.onload = function() {
 		getAllUsersCreateGroupList();
 	}
 
-	document.getElementById("exit_group").onclick = function() {
-		exitAllGroups();
-	}
-
 	for(var i = 0; i < document.getElementsByClassName("chosen_menu_group").length; i++) {
 		document.getElementsByClassName("chosen_menu_group")[i].onclick = function() {
 			getNewUserInterval = 0;
@@ -230,7 +226,14 @@ window.onload = function() {
 			document.getElementsByClassName("lobby_container")[0].style.display="block";
 			document.getElementsByClassName("create_group_container")[0].style.display="none";
 			document.getElementsByClassName("multiplayer_lobby_container")[0].style.display="none";
-			document.getElementsByClassName("lobby_admin")[0].style.display="block";
+			document.getElementsByClassName("lobby_admin")[0].style.display="none";
+			document.getElementsByClassName("lobby")[0].style.display="none";
+			if (frontadmin == 1) {
+				document.getElementsByClassName("lobby_admin")[0].style.display="block";
+			} else {
+				document.getElementsByClassName("lobby")[0].style.display="block";
+			}
+			console.log("show admin stuff");
 			getGroups();
 		}
 	}
@@ -276,7 +279,15 @@ window.onload = function() {
 						document.getElementsByClassName("lobby_container")[0].style.display="block";
 						document.getElementsByClassName("create_group_container")[0].style.display="none";
 						document.getElementsByClassName("multiplayer_lobby_container")[0].style.display="none";
-						document.getElementsByClassName("lobby_admin")[0].style.display="block";
+						document.getElementsByClassName("lobby_admin")[0].style.display="none";
+						document.getElementsByClassName("lobby")[0].style.display="none";
+						if (frontadmin == 1) {
+							console.log("show admin stuff");
+							document.getElementsByClassName("lobby_admin")[0].style.display="block";
+						} else {
+							document.getElementsByClassName("lobby")[0].style.display="block";
+						}
+
 						document.getElementById("creategroup").style.display="block";
 						document.getElementById("groupname").innerHTML="";
 						stopRequestingLobbyGroups = 0;
@@ -451,6 +462,7 @@ window.onload = function() {
 					answer_return = httpRequest.responseText;
 					console.log(answer_return);
 					if (answer_return == "is_admin") {
+						frontadmin = 1;
 						document.getElementById("user_chosen_yes").style.display="block";
 						document.getElementById("user_chosen_yes").style.width="100%";
 						document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als beheerder";
@@ -480,6 +492,7 @@ window.onload = function() {
 					answer_return = httpRequest.responseText;
 					console.log(answer_return);
 					if (answer_return == "is_admin") {
+						console.log("FRONT ADMIN");
 						frontadmin = 1;
 						document.getElementsByClassName("lobby_container")[0].style.display="block";
 						document.getElementsByClassName("lobby_admin")[0].style.display="block";
@@ -819,14 +832,69 @@ window.onload = function() {
 		document.getElementsByClassName("question_container")[0].style.display="none";
 		document.getElementsByClassName("category_container")[0].style.display="none";
 		document.getElementsByClassName("final_score_container")[0].style.display="block";
+		document.getElementsByClassName("user_answers_container")[0].style.display="none";
 		if (glob_group_id == -1 && frontadmin == 0) {
 			console.log("show final score: "+score);
-			document.getElementsByClassName("inner_pos_score")[0].innerHTML = score+" van de "+amount_of_questions+" punten";
+			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "<div class='score' id='score_-1'>"+score+" van de "+amount_of_questions+" punten </div>";
 		} else if (glob_group_id != -1 && frontadmin == 0) {
-			document.getElementsByClassName("inner_pos_score")[0].innerHTML = score+" van de "+amount_of_questions+" punten";
+			document.getElementsByClassName("inner_pos_score")[0].innerHTML = "<div class='score' id='score_-1'>"+score+" van de "+amount_of_questions+" punten </div>";
 		} else if (glob_group_id != -1 && frontadmin == 1) {
 			showAdminScores(amount_of_questions);
 		}
+	}
+
+	function getAnswersFromUser(id,name,group_id) {
+		document.getElementsByClassName("user_answers_container")[0].innerHTML = "Loading..";
+		document.getElementsByClassName("inner_pos_score")[0].style.display="none";
+		document.getElementsByClassName("user_answers_container")[0].style.display="block";
+		document.getElementById("end_text").innerHTML = name;
+		console.log(name);
+		document.getElementById("end_text").style.fontSize = "18px";
+
+		document.getElementById("reload").style.display="none";
+		document.getElementById("back_to_scores").style.display="block";
+
+		var httpRequest = new XMLHttpRequest();
+		var answer_return;
+		if (!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?group_id='+group_id+'&user_id='+id+'&session_token='+readCookie('token')+'&function=getScoresSingleUser');
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					document.getElementsByClassName("user_answers_container")[0].innerHTML = "";
+					var answers = answer_return.split("|");
+					for(var i = 1; i < answers.length; i++) {
+
+						var guessed_answer = answers[i].split(":")[1].split("=")[1];
+						var correct_answer = answers[i].split(":")[1].split("=")[0];
+
+						document.getElementsByClassName("user_answers_container")[0].innerHTML += "<div>"+answers[i].split(":")[0]+"</div>";
+						if (guessed_answer != correct_answer) {
+							document.getElementsByClassName("user_answers_container")[0].innerHTML += "<div style='color:red;'>"+guessed_answer+"</div>";
+						}
+						document.getElementsByClassName("user_answers_container")[0].innerHTML += "<div style='color:#00f773;margin-bottom: 10px;padding-bottom: 5px;border-bottom: 1px solid #6b99be;'>"+correct_answer+"</div>";
+					}
+					//console.log(answer_return);
+				}
+			}
+		}
+
+		document.getElementById("back_to_scores").onclick = function() {
+			backToAdminScores();
+		}
+	}
+
+	function backToAdminScores() {
+		document.getElementsByClassName("inner_pos_score")[0].style.display="block";
+		document.getElementsByClassName("user_answers_container")[0].style.display="none";
+		document.getElementById("reload").style.display="block";
+		document.getElementById("back_to_scores").style.display="none";
+		document.getElementById("end_text").innerHTML = "Eindscores";
+		document.getElementById("end_text").style.fontSize = "26px";
 	}
 
 	function showAdminScores(amount_of_questions) {
@@ -847,11 +915,20 @@ window.onload = function() {
 					document.getElementsByClassName("parrot")[0].style.display = "none";
 					answer_return = httpRequest.responseText;
 					var user_scores = answer_return.split('|');
+					var score = "";
 					for(var i = 0; i < user_scores.length; i++) {
 						if(user_scores[i] != "") {
-							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div>"+user_scores[i]+" / "+amount_of_questions+"</div>";
+							score = user_scores[i].split("=")[1];
+							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div class='score' id='score_"+user_scores[i].split("=")[0]+"'>"+score+" / "+amount_of_questions+"</div>";
 						}
-						//console.log(user_scores[i]);
+					}
+					for (var i = 0; i < document.getElementsByClassName("score").length; i++) {
+						document.getElementsByClassName("score")[i].onclick = function(e) {
+							var temp_id = e.srcElement.id.split("_")[1];
+							console.log(score);
+							score = score.split(":")[0]+" deze antwoorden geselecteerd.<br>("+score.split(":")[1]+"/"+amount_of_questions+") goed.";
+							getAnswersFromUser(temp_id,score,group_id);
+						}
 					}
 				} else {
 					answer_return = 'There was a problem with the request.';
@@ -860,7 +937,7 @@ window.onload = function() {
 					delay(function(){
 						showAdminScores(amount_of_questions);
 						//console.log("ping");
-					}, 100 );
+					}, 500 );
 				}
 			}
 		}

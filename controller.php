@@ -49,12 +49,12 @@
                                 if ($row[$i]["finished"] == "1") {
                                     echo "✓ ";
                                 }
-                                echo $temp_user_row[0]["user_name"]." ".$temp_user_row[0]["surname"]." heeft ";
+                                echo $temp_user_row[0]["id"]."=".$temp_user_row[0]["user_name"]." ".$temp_user_row[0]["surname"]." heeft <br>";
                             }
                             if ($row[$i]["score"] == "1") {
-                                echo $row[$i]["score"]." ";
+                                echo ":".$row[$i]["score"]." ";
                             } else {
-                                echo $row[$i]["score"]." ";
+                                echo ":".$row[$i]["score"]." ";
                             }
                             echo "|";
                         }
@@ -370,29 +370,18 @@
 
                     $row = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     $group_admin_id = $row[0]["id"];
-                    if($result_answer = $mysqli->query("SELECT * FROM group_has_user WHERE user_id='$temp_new_id' AND group_id='$group_admin_id'")) {
-                        if(($result_answer->num_rows) > 0) {
-                            $exists = true;
-                        }
-                    }
-                    if (!$exists) {
-                        $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$group_admin_id')");
-                    }
-                }
-                //echo $mysqli->insert_id;
-                for ($i = 0; $i < count($users_array); $i++) {
-                    //echo $temp_new_id." ".$users_array[$i]."|";
-                    if ($users_array[$i] != 0) {
-                        if($result_answer = $mysqli->query("SELECT * FROM group_has_user WHERE user_id='$temp_new_id' AND group_id='$users_array[$i]'")) {
-                            if(($result_answer->num_rows) > 0) {
-                                $exists_user = true;
+
+                    $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$group_admin_id')");
+
+                    for ($i = 0; $i < count($users_array); $i++) {
+                        if ($users_array[$i] != 0) {
+                            if($result_answer = $mysqli->query("SELECT * FROM group_has_user WHERE group_id='$temp_new_id' AND user_id='$users_array[$i]'")) {
+                                if(($result_answer->num_rows) == 0) {
+                                    $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$users_array[$i]')");
+                                }
                             }
                         }
-                        if (!$exists_user) {
-                            $mysqli->query("INSERT INTO group_has_user (group_id, user_id) VALUES ('$temp_new_id', '$users_array[$i]')");
-                        }
                     }
-                    //echo mysqli_error($mysqli);
                 }
             } else {
 
@@ -462,18 +451,6 @@
                     }
                 }
             }
-
-
-            /*
-            $result = $mysqli->query("SELECT * FROM questions");
-            $amount_of_questions = mysqli_num_rows($result);
-            $questions_answered_array = explode(",",$_GET['questions_answered']);
-            if ($amount_of_questions == count($questions_answered_array)) {
-                echo "end";
-            } else {
-                while (in_array(($input_question = rand(0,mysqli_num_rows($result)-1)),$questions_answered_array));
-            }
-            */
         }
 
         function getQuestionWithAnswers() {
@@ -712,6 +689,55 @@
                 }
             }
         }
+
+        function getScoresSingleUser() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
+            $user_id = $mysqli->real_escape_string($_GET['user_id']);
+            $group_id = $mysqli->real_escape_string($_GET['group_id']);
+
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='1'")) {
+                if($result_answer->num_rows > 0) {
+                    if ($result_users = $mysqli->query("SELECT * FROM users WHERE id = '$user_id'")) {
+                        $row_users = mysqli_fetch_all($result_users, MYSQLI_ASSOC);
+                        for($k = 0; $k < $result_users->num_rows; $k++) {
+                            $temp_token = $row_users[$k]["session_token"];
+                            if ($result_user = $mysqli->query("SELECT * FROM scores WHERE user_token = '$temp_token' AND group_id = '$group_id'")) {
+                                if($result_user->num_rows > 0) {
+                                    $row_user = mysqli_fetch_all($result_user, MYSQLI_ASSOC);
+                                    for($i = 0; $i < $result_user->num_rows; $i++) {
+                                        $result_array = explode("|",$row_user[$i]["progression"]);
+                                        for($j = 1; $j < count($result_array); $j++) {
+                                            $question_id = explode("=",$result_array[$j])[0];
+                                            $question = "";
+                                            $answer = explode("=",$result_array[$j])[1];
+                                            echo "|";
+                                            if($result_question = $mysqli->query("SELECT * FROM questions WHERE id = '$question_id' ORDER BY id")) {
+                                                $row_question = mysqli_fetch_all($result_question, MYSQLI_ASSOC);
+                                                echo $row_question[0]["question"];
+                                            }
+                                            if($result_answer = $mysqli->query("SELECT * FROM answers WHERE question_id = '$question_id' AND is_correct='1'")) {
+                                                $row_answer = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+                                                $guessed = explode(".",$answer)[1];
+                                                echo ":".$row_answer[0]["answer"]."=";
+                                                if($result_guess = $mysqli->query("SELECT * FROM answers WHERE id = '$guessed'")) {
+                                                    $row_guess = mysqli_fetch_all($result_guess, MYSQLI_ASSOC);
+                                                    if ($result_guess->num_rows > 0) {
+                                                        echo $row_guess[0]["answer"];
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //echo $row_user[$i]["progression"];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     $functions = new CallFunctions;
@@ -747,7 +773,8 @@
         "addQuestion",
         "removeQuestion",
         "getAllUsers",
-        "removeUser"
+        "removeUser",
+        "getScoresSingleUser"
     ];
 
     if(isset($_GET['function']) && in_array($_GET['function'], $functions_array)) {

@@ -118,6 +118,7 @@ window.onload = function() {
     }
 
     function showPrompt(text,add) {
+        console.log(add);
         document.getElementsByClassName("overlay_container")[0].style.display="block";
         if (add == "prompt") {
             document.getElementById("loading").style.display="none";
@@ -128,15 +129,19 @@ window.onload = function() {
         } else if (add == "add_question") {
             document.getElementById("loading").style.display="none";
             document.getElementById("add_cat").style.display="block";
+            document.getElementById("prompt").style.display="none";
             document.getElementById("remove_question").style.display="none";
             document.getElementById("remove_user").style.display="none";
             document.getElementById("question_title").focus();
-        } else if (add="remove_user")  {
+        } else if (add == "remove_user")  {
+            console.log("remove user");
             document.getElementById("loading").style.display="none";
             document.getElementById("add_cat").style.display="none";
+            document.getElementById("prompt").style.display="none";
             document.getElementById("remove_question").style.display="none";
             document.getElementById("remove_user").style.display="block";
         } else {
+            console.log("question");
             document.getElementById("loading").style.display="none";
             document.getElementById("add_cat").style.display="none";
             document.getElementById("prompt").style.display="none";
@@ -255,6 +260,7 @@ window.onload = function() {
 
     function removePrompt(question_title, question_id) {
         showPrompt(question_title,question_id);
+        console.log("question");
         document.getElementById("remove_question_button").onclick = function() {
             removeQuestion(question_id,false);
         }
@@ -313,6 +319,7 @@ window.onload = function() {
                             var user_id = e.srcElement.parentNode.id.split("_")[1];
                             document.getElementById("user_text").innerHTML = e.srcElement.parentNode.children[2].innerHTML.split(":")[0];
                             removeUserPrompt(user_id);
+                            console.log("DONT DO THIS");
                         }
                     }
 

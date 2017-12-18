@@ -251,11 +251,15 @@
                 </div>
                 <div class="final_score_container">
                     <div class="pos_score">
-                        <h3>Eindscore</h3>
+                        <h3 id="end_text">Eindscore</h3>
                         <img class="parrot" src="assets/img/parrot.gif">
                         <div class="inner_pos_score"></div>
+                        <div class="user_answers_container"></div>
                     </div>
                     <div class="sub_final_score_container">
+                        <div class="chosen_button_end" id="back_to_scores">
+                            <p>Terug naar overzicht</p>
+                        </div>
                         <div class="chosen_button" id="reload">
                             <p>Terug naar menu</p>
                         </div>
