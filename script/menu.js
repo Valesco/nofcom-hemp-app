@@ -709,7 +709,7 @@ window.onload = function() {
 							}
 						}
 						document.getElementById("play").onclick = function() {
-							sendPlayPingToUsers(id);
+							playAll();
 							document.getElementById("exit_group").style.display="none";
 							document.getElementById("play").style.display="none";
 						}
