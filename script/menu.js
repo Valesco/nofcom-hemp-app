@@ -35,17 +35,6 @@ window.onload = function() {
 		checkIntroCode(readCookie('code'));
 	}
 
-	function reverseChildNodes(node) {
-		var parentNode = node.parentNode, nextSibling = node.nextSibling,
-		    frag = node.ownerDocument.createDocumentFragment();
-		parentNode.removeChild(node);
-		while(node.lastChild)
-		    frag.appendChild(node.lastChild);
-		node.appendChild(frag);
-		parentNode.insertBefore(node, nextSibling);
-		return node;
-	}
-
 	function createCookie(name,value,age) {
 		document.cookie = name + "=" + value +"; age="+ age + "; path=/";
 	}
@@ -271,9 +260,13 @@ window.onload = function() {
 			} else {
 				document.getElementsByClassName("lobby")[0].style.display="block";
 			}
-			console.log("show admin stuff");
 			getGroups();
 		}
+	}
+
+	document.getElementById("play_all").onclick = function() {
+		document.getElementById("play_all").innerHTML = "<p>Loading..</p>";
+		playAll();
 	}
 
 	for(var i = 0; i < document.getElementsByClassName("chosen_menu").length; i++) {
@@ -413,7 +406,6 @@ window.onload = function() {
 		location.reload(-1);
 	}
 
-
 	document.getElementById("chosen_username").onclick = function() {
 		document.getElementById("chosen_username").style.display="none";
 		var leadername = document.getElementById("leadername").value;
@@ -438,6 +430,17 @@ window.onload = function() {
 		}
 	}
 
+	function playAll() {
+		var item_length = document.getElementsByClassName("lobby_item_list")[1].children.length;
+		console.log(item_length);
+		for(var i = 0; i < item_length; i++) {
+			var temp_group_id = document.getElementsByClassName("lobby_item_list")[1].children[i].id.split("_")[1];
+			sendPlayPingToUsers(temp_group_id);
+			console.log(temp_group_id);
+		}
+		console.log("do et");
+	}
+
 	function sendPlayPingToUsers(id) {
 		var token = readCookie('token');
 		var httpRequest = new XMLHttpRequest();
@@ -451,6 +454,7 @@ window.onload = function() {
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
+					document.getElementById("play_all").innerHTML = "<p>Alle wachtende groepen laten spelen</p>";
 					answer_return = httpRequest.responseText;
 					if(answer_return == "playing") {
 						//alert("goood");
@@ -567,7 +571,12 @@ window.onload = function() {
 				if (httpRequest.status === 200) {
 					//console.log(frontadmin);
 					var admin_element = 0;
-					if (frontadmin == 1) admin_element = 1;
+					var admin_play_element = 0;
+					if (frontadmin == 1) {
+						admin_element = 1;
+						admin_play_element = 2;
+						document.getElementsByClassName("lobby_item_list")[admin_play_element].innerHTML = "";
+					}
 					document.getElementsByClassName("lobby_item_list")[admin_element].innerHTML = "";
 					answer_return = httpRequest.responseText;
 					//console.log(answer_return);
@@ -576,8 +585,19 @@ window.onload = function() {
 						if (group_items[i] != "") {
 							var group_id = group_items[i].split("=")[0];
 							var group = group_items[i].split("=")[1];
-							document.getElementsByClassName("lobby_item_list")[admin_element].innerHTML += '<div class="lobby_item" id="lobby_'+group_id+'">'+group+'</div>';
+							if (group[0] != "*") {
+								document.getElementsByClassName("lobby_item_list")[admin_element].innerHTML += '<div class="lobby_item" id="lobby_'+group_id+'">'+group+'</div>';
+							} else {
+								if (frontadmin ) {
+									document.getElementsByClassName("lobby_item_list")[admin_play_element].innerHTML += '<div class="lobby_score_item" id="getscore_'+group_id+'">'+group.split("*")[1]+'</div>';
+								}
+							}
 						}
+					}
+					if (document.getElementsByClassName("lobby_item_list")[admin_element].innerHTML == "") {
+						document.getElementById("play_all").style.display = "none";
+					} else {
+						document.getElementById("play_all").style.display = "block";
 					}
 					//temp_group_name = document.getElementById("lobby_"+glob_group_id).innerHTML;
 					for(var i = 0; i < document.getElementsByClassName("lobby_item").length; i++) {
@@ -589,7 +609,24 @@ window.onload = function() {
 							getGroupUsers(id);
 						}
 					}
-					reverseChildNodes(document.getElementsByClassName('lobby_item_list')[admin_element]);
+					for(var i = 0; i < document.getElementsByClassName("lobby_score_item").length; i++) {
+						document.getElementsByClassName("lobby_score_item")[i].onclick = function() {
+							var id = this.id.split("_")[1];
+							glob_group_id = id;
+							document.getElementsByClassName("lobby_container")[0].style.display = "none";
+							document.getElementById("back_to_admin").style.display = "block";
+							document.getElementById("reload").style.display = "none";
+							document.getElementsByClassName("inner_pos_score")[0].innerHTML = "";
+							showFinalScoreGroup();
+						}
+					}
+					document.getElementById("back_to_admin").onclick = function() {
+						document.getElementsByClassName("lobby_container")[0].style.display = "block";
+						document.getElementById("back_to_admin").style.display = "none";
+						document.getElementById("reload").style.display = "block";
+						document.getElementsByClassName("final_score_container")[0].style.display="none";
+					}
+
 				} else {
 					answer_return = 'There was a problem with the request.';
 				}
@@ -887,6 +924,7 @@ window.onload = function() {
 		document.getElementsByClassName("user_answers_container")[0].innerHTML = "Loading..";
 		document.getElementsByClassName("inner_pos_score")[0].style.display="none";
 		document.getElementsByClassName("user_answers_container")[0].style.display="block";
+		document.getElementById("back_to_admin").style.display="none";
 		document.getElementById("end_text").innerHTML = name;
 		console.log(name);
 		document.getElementById("end_text").style.fontSize = "18px";
@@ -931,8 +969,8 @@ window.onload = function() {
 	function backToAdminScores() {
 		document.getElementsByClassName("inner_pos_score")[0].style.display="block";
 		document.getElementsByClassName("user_answers_container")[0].style.display="none";
-		document.getElementById("reload").style.display="block";
 		document.getElementById("back_to_scores").style.display="none";
+		document.getElementById("back_to_admin").style.display="block";
 		document.getElementById("end_text").innerHTML = "Eindscores";
 		document.getElementById("end_text").style.fontSize = "26px";
 	}
@@ -947,6 +985,8 @@ window.onload = function() {
 		httpRequest.open('GET','controller.php?group_id='+group_id+'&token='+admin_token+'&function=getScoresAllUsers');
 		httpRequest.send();
 
+		if (amount_of_questions == undefined) amount_of_questions = 0;
+
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
@@ -959,7 +999,7 @@ window.onload = function() {
 					for(var i = 0; i < user_scores.length; i++) {
 						if(user_scores[i] != "") {
 							score = user_scores[i].split("=")[1];
-							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div class='score' id='score_"+user_scores[i].split("=")[0]+"'>"+score+" / "+amount_of_questions+"</div>";
+							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div class='score' id='score_"+user_scores[i].split("=")[0]+"'>"+score.split(":")[0]+score.split(":")[1]+" / "+amount_of_questions+"</div>";
 						}
 					}
 					for (var i = 0; i < document.getElementsByClassName("score").length; i++) {

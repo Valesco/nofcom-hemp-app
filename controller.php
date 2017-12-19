@@ -209,13 +209,13 @@
             } else {
                 echo mysqli_error($mysqli);
             }
-            if($result_answer_couple = $mysqli->query("SELECT * FROM group_has_user WHERE user_id='$user_id'")) {
+            if($result_answer_couple = $mysqli->query("SELECT * FROM group_has_user WHERE user_id='$user_id' ORDER BY id DESC")) {
                 //echo $user_id." ";
                 $row_couple = mysqli_fetch_all($result_answer_couple, MYSQLI_ASSOC);
                 for($j = 0; $j < $result_answer_couple->num_rows; $j++) {
                     $temp_group_id = $row_couple[$j]["group_id"];
                     //echo $temp_group_id." ".$result_answer_couple->num_rows." ".$j." ";
-                    if($result_answer = $mysqli->query("SELECT * FROM groups WHERE started = '0' AND id = '$temp_group_id'")) {
+                    if($result_answer = $mysqli->query("SELECT * FROM groups WHERE id = '$temp_group_id'")) {
                         //echo "lol";
                         $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
                         for ($i = 0; $i < $result_answer->num_rows; $i++) {
@@ -226,8 +226,13 @@
 
                             $temp_max_user_sum = 0;
                             $temp_max_user_result_answer = $mysqli->query("SELECT * FROM group_has_user WHERE group_id = '$group_id'");
-                            $temp_max_user_sum = $temp_max_user_result_answer->num_rows;
-                            echo $row[$i]["id"]."=".$row[$i]["group_name"]." (".$temp_current_user_sum."/".$temp_max_user_sum.")|";
+                            $temp_max_user_sum = ($temp_max_user_result_answer->num_rows)-1;
+                            if ($row[$i]['started'] == '0') {
+                                echo $row[$i]["id"]."=".$row[$i]["group_name"]." (".$temp_current_user_sum."/".$temp_max_user_sum.")|";
+                            } else if ($temp_current_user_sum > 0) {
+                                echo $row[$i]["id"]."=*".$row[$i]["group_name"]." (".$temp_current_user_sum." deelnemers)|";
+                            }
+
                         }
                     } else {
                         echo mysqli_error($mysqli);
@@ -520,7 +525,7 @@
                     $temp_current_user_sum = $result_answer_users->num_rows;
 
                     $temp_max_user_result_answer = $mysqli->query("SELECT * FROM group_has_user WHERE group_id = '$group_id'");
-                    $temp_max_user_sum = $temp_max_user_result_answer->num_rows;
+                    $temp_max_user_sum = ($temp_max_user_result_answer->num_rows)-1;
 
                     echo $row[0]["group_name"]." (".$temp_current_user_sum."/".$temp_max_user_sum.")";
                 }

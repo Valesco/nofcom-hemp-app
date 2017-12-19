@@ -113,7 +113,7 @@
                         <div class="chosen_button" id="chosen_new_group">
                             <p>Nieuwe groep aanmaken</p>
                         </div>
-                        <h3 style="margin-top:40px;">Spelende groepen, klik om scores te bekijken:</h3>
+                        <h3 style="margin-top:40px;">Alle groepen, klik om scores te bekijken:</h3>
                         <div class="lobby_item_list">
 
                         </div>
@@ -275,6 +275,9 @@
                     <div class="sub_final_score_container">
                         <div class="chosen_button_end" id="back_to_scores">
                             <p>Terug naar overzicht</p>
+                        </div>
+                        <div class="chosen_button" id="back_to_admin">
+                            <p>Terug naar groepenbeheer</p>
                         </div>
                         <div class="chosen_button" id="reload">
                             <p>Terug naar menu</p>

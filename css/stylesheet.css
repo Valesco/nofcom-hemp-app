@@ -199,11 +199,18 @@ body {
     display:none;
 }
 
+.final_score_container #back_to_admin {
+    display:none;
+    bottom: 40px;
+    width: 75%;
+    background-color: #108244;
+    position: absolute;
+}
+
 .final_score_container #reload {
     bottom: 40px;
     width: 75%;
     background-color: #108244;
-    /* margin: 0 auto; */
     position: absolute;
 }
 
@@ -777,6 +784,20 @@ body {
     height: 230px;
     /* padding: 20px 0px 20px 0px; */
     border-radius: 10px;
+}
+
+.lobby_score_item {
+    width: 80%;
+    padding: 10px;
+    font-size: 18px;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #2196F3;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    cursor:pointer;
 }
 
 .lobby_item {
