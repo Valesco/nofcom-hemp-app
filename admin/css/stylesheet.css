@@ -358,6 +358,8 @@ p {
 .input_vraag {
     color: white;
     background-color: #2daae1;
+    width: 100%;
+    padding: 10px 0px 10px 0px;
 }
 
 .input_antwoord {
@@ -482,6 +484,13 @@ p {
     cursor: pointer;
 }
 
+.age_title {
+    color:white;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 22px;
+}
+
 #main_menu {
     display: none;
 }
@@ -496,4 +505,14 @@ p {
 
 #admin_menu {
     display: none;
+}
+
+#age_start {
+    /* float:left; */
+    width:30%;
+}
+
+#age_stop {
+    /* float:left; */
+    width:30%;
 }

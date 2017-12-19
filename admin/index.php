@@ -39,6 +39,9 @@
                     <input class="input_add input_antwoord" id="answer_1" type="text" placeholder="Antwoord 2"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_1">
                     <input class="input_add input_antwoord" id="answer_2" type="text" placeholder="Antwoord 3"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_2">
                     <input class="input_add input_antwoord" id="answer_3" type="text" placeholder="Antwoord 4"><input name="selector" class="checkbox_answer" type="radio" id="checkbox_3">
+                    <h1 class="age_title">Leeftijdsbereik</h1>
+                    <input class="input_add input_antwoord" id="age_start" type="tel" maxlength="2" placeholder="van">
+                    <input class="input_add input_antwoord" id="age_stop" type="tel" maxlength="3" placeholder="tot">
                     <div class="button sub_button return unselectable" id="add_cat_button">Toevoegen</div>
                     <div class="button sub_button return unselectable hide">Terug</div>
                 </div>
@@ -71,8 +74,7 @@
             <div class="inner_container" id="code_menu">
                 <h3 class="sub_title">Code generen</h3>
                 <input class="code_input" id="unique_code" value="0000" readonly>
-                <div class="button unselectable" id="generate_code">Genereer nieuwe code</div>
-                <div class="button unselectable" id="to_admin_menu">Nieuwe groepsleider registreren</div>
+                <div class="button unselectable" id="generate_code">Genereer nieuwe code voor iedereen</div>
                 <div class="button sub_button return unselectable return_to_main">Terug naar menu</div>
                 <div class=""></div>
             </div>
@@ -88,7 +90,7 @@
                 </div>
                 <input type="text" class="code_dn_input" placeholder="Code" id="register_unique_code" value="0000" readonly>
                 <div class="button sub_button unselectable" id="register_admin">Registreer beheerder</div>
-                <div class="button sub_button return unselectable" id="to_code_menu_admin">Terug</div>
+                <div class="button sub_button return unselectable" id="to_edit_menu_admin">Terug</div>
                 <div class=""></div>
             </div>
 
@@ -102,6 +104,7 @@
 
                 </div>
                 <h1 class='checkbox_all_users_text'>Geselecteerde gebruikers verwijderen:</h1><h1 id='remove_all_users'>X</h1>
+                <div class="button unselectable" id="to_admin_menu">Nieuwe groepsleider registreren</div>
                 <div class="button sub_button return unselectable return_to_main">Terug naar menu</div>
             </div>
 

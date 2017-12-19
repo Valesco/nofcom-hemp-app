@@ -126,10 +126,12 @@
             $admin_token = $mysqli->real_escape_string($_GET['token']);
             $group_id = $mysqli->real_escape_string($_GET['group_id']);
             $play = "play";
-            if($result_answer = $mysqli->query("SELECT group_admin FROM groups WHERE group_admin = '$admin_token'")) {
-                if ((string)$result_answer->fetch_row()[0] == (string)$admin_token) {
-                    $mysqli->query("UPDATE scores SET progression = '$play' WHERE group_id = '$group_id'");
-                    $mysqli->query("UPDATE groups SET started = '1' WHERE id = '$group_id' and group_admin = '$admin_token'");
+            if($result_answer = $mysqli->query("SELECT * FROM groups WHERE group_admin = '$admin_token'")) {
+                $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
+                for ($i = 0; $i < $result_answer->num_rows; $i++) {
+                    $temp_id = $row[$i]["id"];
+                    $mysqli->query("UPDATE scores SET progression = '$play' WHERE group_id = '$temp_id'");
+                    $mysqli->query("UPDATE groups SET started = '1' WHERE group_admin = '$admin_token'");
                     echo "playing";
                 }
             }
@@ -416,6 +418,8 @@
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
 
+            $age = preg_replace( '/[^0-9]/', '', $_GET['age']);
+
             $group_id = $mysqli->real_escape_string($_GET['group_id']);
             $local_alone_categories = $mysqli->real_escape_string($_GET['local_alone_categories']);
 
@@ -439,11 +443,13 @@
 
                         echo $category_id."[";
 
-                        if($result_questions = $mysqli->query("SELECT * FROM questions WHERE cat_id='$category_id' ORDER BY RAND() ")) {
+                        if($result_questions = $mysqli->query("SELECT * FROM questions WHERE cat_id='$category_id' AND (age_start <= '$age' AND age_stop > '$age') ORDER BY RAND() ")) {
                             $row_questions = mysqli_fetch_all($result_questions, MYSQLI_ASSOC);
-                            for($k = 0; $k < $result_questions->num_rows; $k++) {
-                                echo $row_questions[$k]["id"];
-                                if ($k != $result_questions->num_rows-1) echo ",";
+                            if (($result_questions->num_rows) > 0) {
+                                for($k = 0; $k < $result_questions->num_rows; $k++) {
+                                    echo $row_questions[$k]["id"];
+                                    if ($k != $result_questions->num_rows-1) echo ",";
+                                }
                             }
                         }
 
@@ -560,8 +566,44 @@
             }
         }
 
+        function getRandomCharacters() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['token']);
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
+                if($result_admin = $mysqli->query("SELECT * FROM app_codes")) {
+                    $row_admin = mysqli_fetch_all($result_admin, MYSQLI_ASSOC);
+                    echo $row_admin[0]["code"];
+                } else {
+                    echo mysqli_error($mysqli);
+                }
+            } else {
+                echo mysqli_error($mysqli);
+            }
+        }
+
         function randomCharacters() {
-            echo $rand = substr(uniqid('', true), -4);
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['token']);
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
+                $rand = substr(uniqid('', true), -4);
+                $mysqli->query("UPDATE `app_codes` SET `code` = '$rand' WHERE `app_codes`.`id` = 1");
+                echo $rand;
+            } else {
+                echo "no_admin";
+            }
+        }
+
+        function randomAdminCharacters() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['token']);
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
+                echo $rand = substr(uniqid('', true), -4);
+            } else {
+                echo "no_admin";
+            }
         }
 
         function loginAjax() {
@@ -605,10 +647,13 @@
             $answer_1 = $mysqli->real_escape_string($_GET['answer_1']);
             $answer_2 = $mysqli->real_escape_string($_GET['answer_2']);
             $answer_3 = $mysqli->real_escape_string($_GET['answer_3']);
+            $age_start = $mysqli->real_escape_string($_GET['age_start']);
+            $age_stop = $mysqli->real_escape_string($_GET['age_stop']);
+
             $answer_array = [$answer_0,$answer_1,$answer_2,$answer_3];
             if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='2'")) {
                 if($result_answer->num_rows > 0) {
-                    if($mysqli->query("INSERT INTO questions (cat_id, question) VALUES ('$cat_id', '$question')")) {
+                    if($mysqli->query("INSERT INTO questions (cat_id, question, age_start, age_stop) VALUES ('$cat_id', '$question', '$age_start', '$age_stop')")) {
                         $temp_new_id = $mysqli->insert_id;
                         for ($i = 0; $i < count($answer_array); $i++) {
                             if ($i == $is_correct) {
@@ -642,7 +687,7 @@
                             if ($result_question = $mysqli->query("SELECT * FROM questions WHERE cat_id='$cat_id'")) {
                                 $row_question = mysqli_fetch_all($result_question, MYSQLI_ASSOC);
                                 for($j = 0; $j < $result_question->num_rows; $j++) {
-                                    echo "*".$row_question[$j]["id"]."=".$row_question[$j]["question"].";";
+                                    echo "*".$row_question[$j]["id"]."=".$row_question[$j]["question"]."^".$row_question[$j]["age_start"]."-".$row_question[$j]["age_stop"].";";
                                     $question_id = $row_question[$j]["id"];
                                     if($result_answer = $mysqli->query("SELECT * FROM answers WHERE question_id = '$question_id'")) {
                                         $row = mysqli_fetch_all($result_answer, MYSQLI_ASSOC);
@@ -738,6 +783,20 @@
                 }
             }
         }
+
+        function checkIntroCode() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $code = $mysqli->real_escape_string($_GET['code']);
+            if($result_admin = $mysqli->query("SELECT * FROM app_codes")) {
+                $row_admin = mysqli_fetch_all($result_admin, MYSQLI_ASSOC);
+                if($row_admin[0]["code"] == $code) {
+                    echo "true";
+                } else {
+                    echo "false";
+                }
+            }
+        }
     }
 
     $functions = new CallFunctions;
@@ -774,7 +833,10 @@
         "removeQuestion",
         "getAllUsers",
         "removeUser",
-        "getScoresSingleUser"
+        "getScoresSingleUser",
+        "checkIntroCode",
+        "randomAdminCharacters",
+        "getRandomCharacters"
     ];
 
     if(isset($_GET['function']) && in_array($_GET['function'], $functions_array)) {

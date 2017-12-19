@@ -31,6 +31,10 @@ window.onload = function() {
 		exitAllGroups();
 	}
 
+	if (readCookie('code') != null) {
+		checkIntroCode(readCookie('code'));
+	}
+
 	function reverseChildNodes(node) {
 		var parentNode = node.parentNode, nextSibling = node.nextSibling,
 		    frag = node.ownerDocument.createDocumentFragment();
@@ -74,10 +78,44 @@ window.onload = function() {
 		}
 	}
 
+	document.getElementById("intro_button").onclick = function() {
+		var code = document.getElementById("intro_code").value;
+		document.getElementById("intro_button").innerHTML = "Laden..";
+		checkIntroCode(code);
+	}
+
+	function checkIntroCode(code) {
+		var httpRequest = new XMLHttpRequest();
+		var answer_return;
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=checkIntroCode&code='+code);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					var answer_return = httpRequest.responseText;
+					console.log(answer_return);
+					if (answer_return == "false") {
+						eraseCookie('code');
+						location.reload(-1);
+					} else if (answer_return == "true") {
+						document.getElementById("code_overlay").style.display = "none";
+						if (readCookie('code') == null) {
+							createCookie('code',code);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	document.getElementById("alone").onclick = function() {
 		glob_group_id = -1;
 		local_score = 0;
 		questions_answered = [];
+		createCookie('age',document.getElementById("age_alone").value);
 		document.getElementsByClassName("alone_select_categories_container")[0].style.display="none";
 		fillQuestions();
 	}
@@ -562,7 +600,7 @@ window.onload = function() {
 				delay(function(){
 					getGroups();
 					//console.log("ping");
-				}, 100 );
+				}, 500 );
 			}
 		}
 	}
@@ -641,7 +679,7 @@ window.onload = function() {
 						checkLobbyStatus(readCookie('token'),id);
 						delay(function(){
 							getGroupUsers(id);
-						}, 100 );
+						}, 250 );
 					} else {
 						answer_return = 'There was a problem with the request.';
 					}
@@ -1006,6 +1044,7 @@ window.onload = function() {
 						getGroups();
 						createCookie('name',temp_name+' '+surname,age);
 						createCookie('token',session_token);
+						createCookie('age',age);
 					} else if (answer_check == "regular") {
 						document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
 						document.getElementsByClassName("lobby_container")[0].style.display="block";
@@ -1016,6 +1055,7 @@ window.onload = function() {
 
 						createCookie('name',temp_name+' '+surname,age);
 						createCookie('token',session_token);
+						createCookie('age',age);
 					}
 				} else {
 					answer_return = 'There was a problem with the request.';
@@ -1025,7 +1065,6 @@ window.onload = function() {
 	}
 
 	function categoryPrompt(category) {
-
 		document.getElementsByClassName("question_container")[0].style.display = "none";
 		var timer = 2750;
 
@@ -1073,6 +1112,11 @@ window.onload = function() {
 		httpRequest.onreadystatechange = validate;
 
 		var temp_local_cats = "";
+		var age;
+
+		if (readCookie('age') != null) {
+			age = readCookie('age');
+		}
 
 		if (glob_group_id == -1) {
 			var count = 0;
@@ -1083,10 +1127,12 @@ window.onload = function() {
 					temp_local_cats += i;
 				}
 			}
-			console.log(temp_local_cats);
+			//console.log(temp_local_cats);
 		}
 
-		httpRequest.open('GET','controller.php?local_alone_categories='+temp_local_cats+'&group_id='+glob_group_id+'&questions_answered='+questions_answered+'&function=getCatAndQuestions');
+		console.log(age);
+
+		httpRequest.open('GET','controller.php?local_alone_categories='+temp_local_cats+'&group_id='+glob_group_id+'&questions_answered='+questions_answered+'&function=getCatAndQuestions'+'&age='+age);
 		httpRequest.send();
 		emptyQuestionAnswers();
 		var time_elapsed = 5;
@@ -1115,7 +1161,7 @@ window.onload = function() {
 								amount_of_questions += temp_category_questions.length;
 							}
 
-							console.log(amount_of_questions);
+							//console.log(amount_of_questions);
 						}
 						if(category_questions[question_progression] != undefined) {
 							current_question_id = category_questions[question_progression];
@@ -1182,13 +1228,14 @@ window.onload = function() {
 				}
 			}
 		}
+
 		function fillContent(question_id) {
 			var answer_return, httpRequest;
 			var user_id = readCookie('token');
 			httpRequest = new XMLHttpRequest();
 			if(!httpRequest) return false;
 			httpRequest.onreadystatechange = validate;
-			httpRequest.open('GET','controller.php?function=getQuestionWithAnswers&question_id='+question_id);
+			httpRequest.open('GET','controller.php?function=getQuestionWithAnswers&question_id='+question_id+'&age='+readCookie('age'));
 			httpRequest.send();
 
 			function validate() {
@@ -1221,6 +1268,7 @@ window.onload = function() {
 	function validateQuestion(question_id,potential_answer,end,amount_of_questions) {
 		var answer_return, httpRequest;
 		var user_id = readCookie('token');
+		checkIntroCode(readCookie('code'));
 		httpRequest = new XMLHttpRequest();
 		if(!httpRequest) return false;
 		httpRequest.onreadystatechange = validate;
@@ -1382,8 +1430,13 @@ window.onload = function() {
 	}
 
 	function fillAloneCategoriesContent() {
+		checkIntroCode(readCookie('code'));
 		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
 		document.getElementsByClassName("categories_group_selection_container")[0].innerHTML = "";
+
+		if(readCookie('age') != null) {
+			document.getElementById("age_alone").value = readCookie('age');
+		}
 
 		var answer_return, httpRequest;
 		httpRequest = new XMLHttpRequest();

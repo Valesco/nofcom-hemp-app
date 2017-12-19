@@ -21,6 +21,13 @@
         <script type="text/javascript" src="script/engine/ColladaLoader2.js"></script>
     </head>
     <body>
+        <div id="code_overlay">
+            <div class="code_overlay_inner">
+                <h1>Om de app te spelen heb je de code nodig.</h1>
+                <input placeholder="Code" id="intro_code" type="text">
+                <div id="intro_button">Doorgaan</div>
+            </div>
+        </div>
         <div class="category_prompt_overlay">
             <div class="category_prompt_overlay_inner">
                 <img src="assets/img/geschiedenis.jpg" id="img_geschiedenis">
@@ -48,7 +55,7 @@
 
                         </div>
                         <div class="chosen_button" id="play">
-                            <p>Play</p>
+                            <p>Meespelen met deze groep en alle groepen laten spelen</p>
                         </div>
                         <div class="chosen_button chosen_menu_group" id="exit_group">
                             <p>Terug naar menu</p>
@@ -95,13 +102,20 @@
                     </div>
                     <div class="lobby_admin">
                         <h1>Lobby</h1>
-                        <h3>Je aangemaakte groepen:</h3>
+                        <h3 id="adminname_show"></h3>
+                        <h3>Wachtende groepen:</h3>
                         <div class="lobby_item_list">
 
                         </div>
-                        <h3 id="adminname_show"></h3>
+                        <div class="chosen_button" id="play_all">
+                            <p>Alle wachtende groepen laten spelen</p>
+                        </div>
                         <div class="chosen_button" id="chosen_new_group">
                             <p>Nieuwe groep aanmaken</p>
+                        </div>
+                        <h3 style="margin-top:40px;">Spelende groepen, klik om scores te bekijken:</h3>
+                        <div class="lobby_item_list">
+
                         </div>
                         <div class="chosen_button" id="back_to_login_admin">
                             <p>Terug naar menu</p>
@@ -225,6 +239,8 @@
                         <div class="alone_select_categories">
                             Laden..
                         </div>
+                        <h1>Wat is je leeftijd?</h1>
+                        <input id="age_alone" type="tel" maxlength="2" value="">
                         <div id="alone">
                             <p>Ik wil spelen!</p>
                         </div>

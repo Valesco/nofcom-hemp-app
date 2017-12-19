@@ -790,6 +790,7 @@ body {
     border-radius: 10px;
     color: white;
     text-align: center;
+    cursor:pointer;
 }
 
 #chosen_new_group {
@@ -1210,6 +1211,10 @@ input {
     padding: 20px 20px 0px 20px;
 }
 
+#play_all {
+    width:100%;
+}
+
 #play {
     width:100%;
 }
@@ -1291,4 +1296,38 @@ input {
 }
 #logo_3 {
     display:block;
+}
+
+#age_alone {
+    width: 50px;
+    margin: 0 auto;
+    display: block;
+}
+
+#intro_button {
+    width: 65%;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 10px;
+    background-color: #2daae1;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#code_overlay {
+    height:100%;
+    min-height:500px;
+    width:100%;
+    z-index: 2;
+    position: absolute;
+    background-color: #dedede;
+}
+
+.code_overlay_inner {
+    width:80%;
+    margin: 0 auto;
+    margin-top: 120px;
+    text-align: center;
 }

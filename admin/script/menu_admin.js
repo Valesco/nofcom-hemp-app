@@ -20,6 +20,7 @@ window.onload = function() {
 
     document.getElementById("to_code_menu").onclick = function() {
         validateAdmin();
+        getRandomCharacters();
         toCodeMenu();
     }
 
@@ -36,12 +37,15 @@ window.onload = function() {
 
     document.getElementById("to_admin_menu").onclick = function() {
         validateAdmin();
+        randomAdminCharacters();
         toAdminMenu();
     }
 
-    document.getElementById("to_code_menu_admin").onclick = function() {
+    document.getElementById("to_edit_menu_admin").onclick = function() {
         validateAdmin();
-        toCodeMenu();
+        toAppMenu();
+        showEdit();
+        getUsers();
     }
 
     document.getElementById("register_admin").onclick = function() {
@@ -82,7 +86,7 @@ window.onload = function() {
 
     function toCodeMenu() {
         hideAllMenuItems();
-        randomCharacters();
+        //randomCharacters();
         document.getElementById("code_menu").style.display="block";
     }
 
@@ -213,9 +217,10 @@ window.onload = function() {
         var answer_1 = document.getElementById('answer_1').value;
         var answer_2 = document.getElementById('answer_2').value;
         var answer_3 = document.getElementById('answer_3').value;
-
+        var age_start = document.getElementById('age_start').value;
+        var age_stop = document.getElementById('age_stop').value;
 		httpRequest.onreadystatechange = validate;
-		httpRequest.open('GET','../controller.php?function=addQuestion&session_token='+readCookie('session_token')+'&cat_id='+cat_id+'&question='+question+'&answer_0='+answer_0+'&answer_1='+answer_1+'&answer_2='+answer_2+'&answer_3='+answer_3+'&is_correct='+is_correct);
+		httpRequest.open('GET','../controller.php?function=addQuestion&session_token='+readCookie('session_token')+'&age_start='+age_start+'&age_stop='+age_stop+'&cat_id='+cat_id+'&question='+question+'&answer_0='+answer_0+'&answer_1='+answer_1+'&answer_2='+answer_2+'&answer_3='+answer_3+'&is_correct='+is_correct);
 		httpRequest.send();
 
 		function validate() {
@@ -368,7 +373,7 @@ window.onload = function() {
 					answer_return = httpRequest.responseText;
                     var categories = answer_return.split("&");
 
-                    console.log(answer_return);
+                    //console.log(answer_return);
 
                     for (var i = 0; i < categories.length; i++) {
                         var content = "";
@@ -379,16 +384,17 @@ window.onload = function() {
                         content += "<div style='display:none;' class='add_button'>Vraag toevoegen</div>";
 
                         for (var j = 1; j < questions.length; j++) {
-                            console.log(questions[j]);
+                            //console.log(questions[j]);
 
                             if (questions[j][0] != "|") {
-                                content += "<div class='question' style='display:none;' id='question_"+questions[j].split(";")[0].split("=")[0]+"'><p>"+questions[j].split(";")[0].split("=")[1]+"</p>";
+                                content += "<div class='question' style='display:none;' id='question_"+questions[j].split(";")[0].split("=")[0]+"'><p>"+questions[j].split(";")[0].split("=")[1].split("^")[0]+"</p>";
                                 content += "<div class='dropdown_button_question'>+</div>";
                                 content += "<div class='remove_button'>X</div>";
                                 content += "<div style='display:none;' id='edit_"+questions[j].split(";")[0].split("=")[0]+"' class='edit_question_button'>Bewerken</div>";
+                                content += "<div style='display:none;' class='age_range'>Leeftijd:"+questions[j].split(";")[0].split("=")[1].split("^")[1]+"</div>";
                             }
                             var answers = questions[j].split("|");
-                            console.log(answers);
+                            //console.log(answers);
                             for (var k = 1; k < answers.length; k++) {
                                 if (answers[k] != "") {
                                     if (answers[k].split("=")[1].split(":")[1] == "1") {
@@ -421,6 +427,9 @@ window.onload = function() {
                                     document.getElementsByClassName("input_antwoord")[question_temp_counter].value=e.srcElement.parentNode.children[k].children[0].innerHTML;
                                     console.log(e.srcElement.parentNode.children[k].children[0].innerHTML);
                                     question_temp_counter++;
+                                } else if (e.srcElement.parentNode.children[k].className == "age_range") {
+                                    document.getElementById("age_start").value = e.srcElement.parentNode.children[k].innerHTML.split(":")[1].split("-")[0];
+                                    document.getElementById("age_stop").value = e.srcElement.parentNode.children[k].innerHTML.split(":")[1].split("-")[1];
                                 }
                             }
                             document.getElementById("question_title").value = question_title;
@@ -448,7 +457,7 @@ window.onload = function() {
                     for (var i = 0; i < document.getElementsByClassName("dropdown_button_question").length; i++) {
                         document.getElementsByClassName("dropdown_button_question")[i].onclick = function (e) {
                             for (var k = 0; k < e.srcElement.parentNode.children.length; k++) {
-                                if (e.srcElement.parentNode.children[k].className == "answer" || e.srcElement.parentNode.children[k].className == "answer correct" || e.srcElement.parentNode.children[k].className == "edit_question_button") {
+                                if (e.srcElement.parentNode.children[k].className == "answer" || e.srcElement.parentNode.children[k].className == "answer correct" || e.srcElement.parentNode.children[k].className == "edit_question_button" || e.srcElement.parentNode.children[k].className == "age_range") {
                                     if (e.srcElement.parentNode.children[k].style.display == "none") {
                                         e.srcElement.innerHTML = "-";
                                         e.srcElement.parentNode.children[k].style.display = "block";
@@ -484,12 +493,67 @@ window.onload = function() {
 		}
     }
 
+    function randomAdminCharacters() {
+        showLoadingOverlay();
+        var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+        var token = readCookie('token');
+        //var token = "";
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','../controller.php?function=randomAdminCharacters&token='+token);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					answer_return = httpRequest.responseText;
+					if(answer_return != "no_admin") {
+                        hideLoading();
+                        document.getElementById("register_unique_code").value = answer_return;
+					} else {
+                        location_reload(-1);
+                    }
+				} else {
+					answer_return = 'Er is een fout opgetreden';
+				}
+			}
+		}
+    }
+
+    function getRandomCharacters() {
+        showLoadingOverlay();
+        var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+        var token = readCookie('session_token');
+        console.log(token);
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','../controller.php?function=getRandomCharacters&token='+token);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					var answer_return = httpRequest.responseText;
+                    console.log(answer_return);
+					if(answer_return != "no_admin") {
+                        hideLoading();
+                        document.getElementById("unique_code").value = answer_return;
+					} else {
+                        location_reload(-1);
+                    }
+				} else {
+					answer_return = 'Er is een fout opgetreden';
+				}
+			}
+		}
+    }
+
     function randomCharacters() {
         showLoadingOverlay();
 		var httpRequest = new XMLHttpRequest();
 		if(!httpRequest) return false;
         //var token = readCookie('token');
-        var token = "";
+        var token = readCookie('session_token');
 		httpRequest.onreadystatechange = validate;
 		httpRequest.open('GET','../controller.php?function=randomCharacters&token='+token);
 		httpRequest.send();
