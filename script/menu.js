@@ -442,6 +442,11 @@ window.onload = function() {
 				if (httpRequest.status === 200) {
 					answer_return = httpRequest.responseText;
 					console.log(answer_return);
+					if (answer_return == "") {
+						eraseCookie('name');
+						eraseCookie('token');
+						location.reload(-1);
+					}
 					document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als deelnemer. <br> Je beheerder is: "+answer_return;
 				}
 			}
@@ -460,7 +465,6 @@ window.onload = function() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
 					answer_return = httpRequest.responseText;
-					console.log(answer_return);
 					if (answer_return == "is_admin") {
 						frontadmin = 1;
 						document.getElementById("user_chosen_yes").style.display="block";
@@ -490,9 +494,7 @@ window.onload = function() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
 					answer_return = httpRequest.responseText;
-					console.log(answer_return);
 					if (answer_return == "is_admin") {
-						console.log("FRONT ADMIN");
 						frontadmin = 1;
 						document.getElementsByClassName("lobby_container")[0].style.display="block";
 						document.getElementsByClassName("lobby_admin")[0].style.display="block";

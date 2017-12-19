@@ -713,7 +713,7 @@
                                             $question = "";
                                             $answer = explode("=",$result_array[$j])[1];
                                             echo "|";
-                                            if($result_question = $mysqli->query("SELECT * FROM questions WHERE id = '$question_id' ORDER BY id")) {
+                                            if($result_question = $mysqli->query("SELECT * FROM questions WHERE id = '$question_id'")) {
                                                 $row_question = mysqli_fetch_all($result_question, MYSQLI_ASSOC);
                                                 echo $row_question[0]["question"];
                                             }
