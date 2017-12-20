@@ -72,7 +72,10 @@
 
                             </div>
                         </div>
-                        <h1>Wie mogen er in de groep komen?</h1> <h4>Alleen gebruikers die zich in de wachtkamer bevinden komen in deze lijst.</h4>
+                        <h1>Maximaal aantal vragen per categorie?*</h1>
+                        <input id="amount_of_questions_per_cat" type="number" min="1" max="100" step="1">
+                        <h4 id="max">*minimaal 1 en maximaal</h4>
+                        <h1>Wie mogen er in de groep komen?*</h1> <h4>*alleen gebruikers die zich in de wachtkamer bevinden komen in deze lijst.</h4>
                         <div class="users_group_selection_container">
                             <div class="user_group_selection_item" style="border: 2px solid #777777; width: 95%;">
                                 <input type="checkbox" id="user_group_check_-1">
@@ -241,6 +244,9 @@
                         </div>
                         <h1>Wat is je leeftijd?</h1>
                         <input id="age_alone" type="tel" maxlength="2" value="">
+                        <h1>Maximaal aantal vragen per categorie?</h1>
+                        <input id="alone_max_questions" type="number" min="1" max="100" value="">
+                        <h4 id="max_alone">*minimaal 1 en maximaal</h4>
                         <div id="alone">
                             <p>Ik wil spelen!</p>
                         </div>

@@ -364,6 +364,7 @@
             $group_admin = $mysqli->real_escape_string($_GET['group_admin']);
             $categories = $mysqli->real_escape_string($_GET['categories']);
             $users = $mysqli->real_escape_string($_GET['users']);
+            $max_questions = $mysqli->real_escape_string($_GET['max_questions']);
             //$users = json_encode($users);
             $current_date = json_encode(date('Y-m-d'));
             $users_array = explode(",", $users);
@@ -371,7 +372,7 @@
             $exists_user = false;
 
             //echo $current_date;
-            if ($mysqli->query("INSERT INTO groups (group_name, time_created, categories, started, group_admin) VALUES ('$group_name', '$current_date', '$categories' ,0, '$group_admin')")) {
+            if ($mysqli->query("INSERT INTO groups (group_name, time_created, categories, started, group_admin, max_questions) VALUES ('$group_name', '$current_date', '$categories' ,0, '$group_admin', '$max_questions')")) {
                 $temp_new_id = $mysqli->insert_id;
                 if($result = $mysqli->query("SELECT * FROM users WHERE session_token = '$group_admin'")) {
 
@@ -409,7 +410,6 @@
                     $appendprogression = "|".$input_question."=1.".$input_answer;
                     $mysqli->query("UPDATE scores SET progression = CONCAT(progression, '$appendprogression') WHERE user_token = '$token' AND group_id = '$group_id'");
                     $mysqli->query("UPDATE scores SET score = score + 1 WHERE user_token = '$token' AND group_id = '$group_id'");
-                    //echo $token." ".$group_id;
                 } else {
                     echo "false";
                     $appendprogression = "|".$input_question."=0.".$input_answer;
@@ -427,11 +427,35 @@
 
             $group_id = $mysqli->real_escape_string($_GET['group_id']);
             $local_alone_categories = $mysqli->real_escape_string($_GET['local_alone_categories']);
+            $amount_questions = 0;
 
             if($local_alone_categories == "") {
                 if($result_admin = $mysqli->query("SELECT * FROM groups WHERE id='$group_id'")) {
                     $row_admin = mysqli_fetch_all($result_admin, MYSQLI_ASSOC);
                     $local_alone_categories = $row_admin[0]["categories"];
+                    $amount_questions = $row_admin[0]["max_questions"];
+                }
+            } else {
+                $amount_questions = preg_replace( '/[^0-9]/', '', $_GET['max_questions']);
+                $result_temp = $mysqli->query("SELECT * FROM categories WHERE id='$category_array[$i]'");
+                $max = 0;
+                if($result_categories = $mysqli->query("SELECT * FROM categories")) {
+                    $row_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
+                    for($i = 0; $i < $result_categories->num_rows; $i++) {
+                        $temp_question_id = $row_categories[$i]['id'];
+                        if($result_questions = $mysqli->query("SELECT * FROM questions WHERE cat_id = '$temp_question_id'")) {
+                            $temp_amount = $result_questions->num_rows;
+                            if ($i == 0) {
+                                $max = $temp_amount;
+                            } else if ($temp_amount < $max) {
+                                $max = $temp_amount;
+                            }
+                        }
+                    }
+                    echo $max;
+                }
+                if ($amount_questions > $max) {
+                    $amount_questions = $max;
                 }
             }
 
@@ -451,9 +475,9 @@
                         if($result_questions = $mysqli->query("SELECT * FROM questions WHERE cat_id='$category_id' AND (age_start <= '$age' AND age_stop > '$age') ORDER BY RAND() ")) {
                             $row_questions = mysqli_fetch_all($result_questions, MYSQLI_ASSOC);
                             if (($result_questions->num_rows) > 0) {
-                                for($k = 0; $k < $result_questions->num_rows; $k++) {
+                                for($k = 0; $k < $amount_questions; $k++) {
                                     echo $row_questions[$k]["id"];
-                                    if ($k != $result_questions->num_rows-1) echo ",";
+                                    if ($k != $amount_questions-1) echo ",";
                                 }
                             }
                         }
@@ -752,7 +776,8 @@
                     if ($result_users = $mysqli->query("SELECT * FROM users WHERE id = '$user_id'")) {
                         $row_users = mysqli_fetch_all($result_users, MYSQLI_ASSOC);
                         for($k = 0; $k < $result_users->num_rows; $k++) {
-                            $temp_token = $row_users[$k]["session_token"];
+                            $temp_token = $row_users[0]["session_token"];
+                            echo $temp_token;
                             if ($result_user = $mysqli->query("SELECT * FROM scores WHERE user_token = '$temp_token' AND group_id = '$group_id'")) {
                                 if($result_user->num_rows > 0) {
                                     $row_user = mysqli_fetch_all($result_user, MYSQLI_ASSOC);
@@ -802,6 +827,54 @@
                 }
             }
         }
+
+        function getMax() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='1'")) {
+                if($result_categories = $mysqli->query("SELECT * FROM categories")) {
+                    $row_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
+                    $max = 0;
+                    for($i = 0; $i < $result_categories->num_rows; $i++) {
+                        $temp_question_id = $row_categories[$i]['id'];
+                        if($result_questions = $mysqli->query("SELECT * FROM questions WHERE cat_id = '$temp_question_id'")) {
+                            $temp_amount = $result_questions->num_rows;
+                            if ($i == 0) {
+                                $max = $temp_amount;
+                            } else if ($temp_amount < $max) {
+                                $max = $temp_amount;
+                            }
+                        }
+                    }
+                    echo $max;
+                }
+            }
+        }
+
+        function getMaxScoreCount() {
+            $db = CallFunctions::getInstance();
+            $mysqli = $db->getConnection();
+            $session_token = $mysqli->real_escape_string($_GET['session_token']);
+            if($result_answer = $mysqli->query("SELECT * FROM users WHERE session_token = '$session_token' AND admin_level='1'")) {
+                if($result_categories = $mysqli->query("SELECT * FROM categories")) {
+                    $row_categories = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
+                    $max = 0;
+                    for($i = 0; $i < $result_categories->num_rows; $i++) {
+                        $temp_question_id = $row_categories[$i]['id'];
+                        if($result_questions = $mysqli->query("SELECT * FROM questions WHERE cat_id = '$temp_question_id'")) {
+                            $temp_amount = $result_questions->num_rows;
+                            if ($i == 0) {
+                                $max = $temp_amount;
+                            } else if ($temp_amount < $max) {
+                                $max = $temp_amount;
+                            }
+                        }
+                    }
+                    echo $max;
+                }
+            }
+        }
     }
 
     $functions = new CallFunctions;
@@ -841,7 +914,9 @@
         "getScoresSingleUser",
         "checkIntroCode",
         "randomAdminCharacters",
-        "getRandomCharacters"
+        "getRandomCharacters",
+        "getMax",
+        "getMaxScoreCount"
     ];
 
     if(isset($_GET['function']) && in_array($_GET['function'], $functions_array)) {

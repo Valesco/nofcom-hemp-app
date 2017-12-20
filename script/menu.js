@@ -21,6 +21,7 @@ window.onload = function() {
 	var stopRequestingLobbyEndScores = 0;
 	var getNewUserInterval = 0;
 	var temp_group_name = "";
+	var temp_local_cats;
 	const username = readCookie('name');
 
 	checkUsername(username,"check");
@@ -113,6 +114,7 @@ window.onload = function() {
 		document.getElementsByClassName("explain_container")[0].style.display="none";
 		document.getElementsByClassName("alone_select_categories_container")[0].style.display="block";
 		fillAloneCategoriesContent();
+		getMax();
 	}
 
 	document.getElementById("pre_alone").onclick = function() {
@@ -239,6 +241,7 @@ window.onload = function() {
 	document.getElementById("chosen_new_group").onclick = function() {
 		document.getElementsByClassName("lobby_admin")[0].style.display="none";
 		document.getElementsByClassName("create_group_container")[0].style.display="block";
+		getMax();
 		setWaitingToFalse();
 		fillGroupCategoriesContent();
 		getAllUsersCreateGroupList();
@@ -288,6 +291,7 @@ window.onload = function() {
 		var group_name = document.getElementById("groupname").value;
 		document.getElementById("creategroup").style.display="none";
 		var categories_selected = [];
+		var amount_of_questions_per_cat = document.getElementById("amount_of_questions_per_cat").value;
 
 		if(group_name.length > 1) {
 			document.getElementById("groupname").style.border = "none";
@@ -297,10 +301,11 @@ window.onload = function() {
 				}
 			}
 			//console.log(group_name,group_code,categories_selected);
+			var max_questions = document.getElementById("amount_of_questions_per_cat").value;
 			var httpRequest = new XMLHttpRequest();
 			if(!httpRequest) return false;
 			httpRequest.onreadystatechange = validate;
-			httpRequest.open('GET','controller.php?function=createGroup&group_name='+group_name+'&categories='+categories_selected+'&users='+users_selected+'&group_admin='+readCookie('token'));
+			httpRequest.open('GET','controller.php?function=createGroup&max_questions='+amount_of_questions_per_cat+'&group_name='+group_name+'&categories='+categories_selected+'&users='+users_selected+'&group_admin='+readCookie('token')+'&max_questions='+max_questions);
 			httpRequest.send();
 			function validate() {
 				if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -432,13 +437,40 @@ window.onload = function() {
 
 	function playAll() {
 		var item_length = document.getElementsByClassName("lobby_item_list")[1].children.length;
-		console.log(item_length);
+		//console.log(item_length);
 		for(var i = 0; i < item_length; i++) {
 			var temp_group_id = document.getElementsByClassName("lobby_item_list")[1].children[i].id.split("_")[1];
 			sendPlayPingToUsers(temp_group_id);
-			console.log(temp_group_id);
+			//console.log(temp_group_id);
 		}
-		console.log("do et");
+		//console.log("do et");
+	}
+
+	function getMax() {
+		var token = readCookie('token');
+		var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=getMax&session_token='+token);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					var answer_return = httpRequest.responseText;
+					document.getElementById("amount_of_questions_per_cat").value = answer_return;
+					document.getElementById("amount_of_questions_per_cat").max = answer_return;
+					document.getElementById("max").innerHTML = "*minimaal 1 en maximaal "+answer_return;
+
+					document.getElementById("alone_max_questions").value = answer_return;
+					document.getElementById("alone_max_questions").max = answer_return;
+					document.getElementById("max_alone").innerHTML = "*minimaal 1 en maximaal "+answer_return;
+					console.log(answer_return);
+				} else {
+					answer_return = 'There was a problem with the request.';
+				}
+			}
+		}
 	}
 
 	function sendPlayPingToUsers(id) {
@@ -945,6 +977,7 @@ window.onload = function() {
 					answer_return = httpRequest.responseText;
 					document.getElementsByClassName("user_answers_container")[0].innerHTML = "";
 					var answers = answer_return.split("|");
+					console.log(id,answer_return);
 					for(var i = 1; i < answers.length; i++) {
 
 						var guessed_answer = answers[i].split(":")[1].split("=")[1];
@@ -975,6 +1008,28 @@ window.onload = function() {
 		document.getElementById("end_text").style.fontSize = "26px";
 	}
 
+	function getMaxScoreCount(temp_element_id) {
+		var token = readCookie('token');
+		var httpRequest = new XMLHttpRequest();
+		if(!httpRequest) return false;
+		httpRequest.onreadystatechange = validate;
+		httpRequest.open('GET','controller.php?function=getMaxScoreCount&session_token='+token);
+		httpRequest.send();
+
+		function validate() {
+			if (httpRequest.readyState === XMLHttpRequest.DONE) {
+				if (httpRequest.status === 200) {
+					var answer_return = httpRequest.responseText;
+					console.log(temp_element_id);
+					document.getElementById(temp_element_id).innerHTML += " "+answer_return;
+					console.log(answer_return);
+				} else {
+					answer_return = 'There was a problem with the request.';
+				}
+			}
+		}
+	}
+
 	function showAdminScores(amount_of_questions) {
 		stopRequestingLobbyEndScores = 0;
 		var admin_token = readCookie('token');
@@ -984,8 +1039,6 @@ window.onload = function() {
 		httpRequest.onreadystatechange = validate;
 		httpRequest.open('GET','controller.php?group_id='+group_id+'&token='+admin_token+'&function=getScoresAllUsers');
 		httpRequest.send();
-
-		if (amount_of_questions == undefined) amount_of_questions = 0;
 
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -999,7 +1052,16 @@ window.onload = function() {
 					for(var i = 0; i < user_scores.length; i++) {
 						if(user_scores[i] != "") {
 							score = user_scores[i].split("=")[1];
-							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div class='score' id='score_"+user_scores[i].split("=")[0]+"'>"+score.split(":")[0]+score.split(":")[1]+" / "+amount_of_questions+"</div>";
+							document.getElementsByClassName("inner_pos_score")[0].innerHTML += "<div class='score' id='score_"+user_scores[i].split("=")[0]+"'>"+score.split(":")[0]+score.split(":")[1]+" /</div>";
+							if (amount_of_questions == undefined) {
+								var temp_element_id;
+								if (temp_local_cats.length > 0) {
+									temp_element_id = "score_"+user_scores[i].split("=")[0]*temp_local_cats.length;
+								} else {
+									temp_element_id = "score_"+user_scores[i].split("=")[0]*temp_local_cats.length;
+								}
+								getMaxScoreCount(temp_element_id);
+							}
 						}
 					}
 					for (var i = 0; i < document.getElementsByClassName("score").length; i++) {
@@ -1017,7 +1079,7 @@ window.onload = function() {
 					delay(function(){
 						showAdminScores(amount_of_questions);
 						//console.log("ping");
-					}, 500 );
+					}, 1500 );
 				}
 			}
 		}
@@ -1150,14 +1212,15 @@ window.onload = function() {
 		httpRequest = new XMLHttpRequest();
 		if (!httpRequest) return false;
 		httpRequest.onreadystatechange = validate;
-
-		var temp_local_cats = "";
+		temp_local_cats = "";
 		var age;
-
+		var max_questions = 0;
+		if (document.getElementById("alone_max_questions").value > 0) {
+			max_questions = document.getElementById("alone_max_questions").value;
+		}
 		if (readCookie('age') != null) {
 			age = readCookie('age');
 		}
-
 		if (glob_group_id == -1) {
 			var count = 0;
 			for (var i = 0; i < category_items.length-1; i++) {
@@ -1167,12 +1230,8 @@ window.onload = function() {
 					temp_local_cats += i;
 				}
 			}
-			//console.log(temp_local_cats);
 		}
-
-		console.log(age);
-
-		httpRequest.open('GET','controller.php?local_alone_categories='+temp_local_cats+'&group_id='+glob_group_id+'&questions_answered='+questions_answered+'&function=getCatAndQuestions'+'&age='+age);
+		httpRequest.open('GET','controller.php?local_alone_categories='+temp_local_cats+'&group_id='+glob_group_id+'&questions_answered='+questions_answered+'&function=getCatAndQuestions'+'&age='+age+'&max_questions='+max_questions);
 		httpRequest.send();
 		emptyQuestionAnswers();
 		var time_elapsed = 5;
@@ -1245,7 +1304,6 @@ window.onload = function() {
 									document.getElementsByClassName("chosen_container")[0].style.display="none";
 									validateQuestion(current_question_id,potential_answer,"true",amount_of_questions);
 									document.getElementsByClassName("category_prompt_overlay")[0].outerHTML='';
-									//endGame(local_score);
 								} else {
 									validateQuestion(current_question_id,potential_answer,"false");
 									getCategoryWithQuestions(category_progression);
@@ -1275,6 +1333,8 @@ window.onload = function() {
 			httpRequest = new XMLHttpRequest();
 			if(!httpRequest) return false;
 			httpRequest.onreadystatechange = validate;
+
+			console.log(question_id);
 			httpRequest.open('GET','controller.php?function=getQuestionWithAnswers&question_id='+question_id+'&age='+readCookie('age'));
 			httpRequest.send();
 
