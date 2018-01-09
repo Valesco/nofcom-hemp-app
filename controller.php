@@ -61,7 +61,7 @@
                     }
                 }
             } else {
-                echo mysqli_error($mysqli);
+                die(mysqli_error($mysqli));
             }
         }
 
