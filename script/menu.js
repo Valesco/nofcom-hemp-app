@@ -1,5 +1,6 @@
 window.onload = function() {
 
+	//On moment of exiting browser, fire these functions
 	window.onbeforeunload = function() {
 		setWaitingToFalse();
 		exitAllGroups();
@@ -24,22 +25,27 @@ window.onload = function() {
 	var temp_local_cats = "";
 	const username = readCookie('name');
 
+	//Check if session exists
 	checkUsername(username,"check");
 
+	//If session_token doesn't exist, fire these functions
 	if (readCookie('token') != null) {
 		document.getElementsByClassName("pre_new_user_prompt_container")[0].style.display="none";
 		setWaitingToFalse();
 		exitAllGroups();
 	}
 
+	//If code doesn't exist, show intro code
 	if (readCookie('code') != null) {
 		checkIntroCode(readCookie('code'));
 	}
 
+	//Create new cookie
 	function createCookie(name,value,age) {
 		document.cookie = name + "=" + value +"; age="+ age + "; path=/";
 	}
 
+	//Read an existing cookie
 	function readCookie(name) {
 		var nameEQ = name + "=";
 		var ca = document.cookie.split(';');
@@ -51,10 +57,12 @@ window.onload = function() {
 		return null;
 	}
 
+	//Remove existing cookie
 	function eraseCookie(name) {
 		createCookie(name,'=; Max-Age=0');
 	}
 
+	//Change logo color to the one in the parameter
 	function hideAllLogosExceptPara(show) {
 		document.getElementById("logo_1").style.display="none";
 		document.getElementById("logo_2").style.display="none";
@@ -68,12 +76,14 @@ window.onload = function() {
 		}
 	}
 
+	//Submit code
 	document.getElementById("intro_button").onclick = function() {
 		var code = document.getElementById("intro_code").value;
 		document.getElementById("intro_button").innerHTML = "Laden..";
 		checkIntroCode(code);
 	}
 
+	//Validate code
 	function checkIntroCode(code) {
 		var httpRequest = new XMLHttpRequest();
 		var answer_return;
@@ -101,6 +111,7 @@ window.onload = function() {
 		}
 	}
 
+	//Start alone gamemode
 	document.getElementById("alone").onclick = function() {
 		glob_group_id = -1;
 		local_score = 0;
@@ -110,6 +121,7 @@ window.onload = function() {
 		fillQuestions();
 	}
 
+	//Get categories for alone gamemode
 	document.getElementById("categories_alone").onclick = function() {
 		document.getElementsByClassName("explain_container")[0].style.display="none";
 		document.getElementsByClassName("alone_select_categories_container")[0].style.display="block";
@@ -117,6 +129,7 @@ window.onload = function() {
 		getMax();
 	}
 
+	//Show alone explanation before selection categories
 	document.getElementById("pre_alone").onclick = function() {
 		document.getElementById("start_menu").style.display="none";
 		document.getElementsByClassName("explain_container")[0].style.display="block";
@@ -127,11 +140,13 @@ window.onload = function() {
 		hideAllLogosExceptPara(2);
 	}
 
+	//Show all possible explanations
 	document.getElementById("explain").onclick = function() {
 		document.getElementById("start_menu").style.display="none";
 		document.getElementById("explain_menu").style.display="block";
 	}
 
+	//Show alone explanation
 	document.getElementById("explain_alone_button").onclick = function() {
 		document.getElementById("explain_menu").style.display="none";
 		document.getElementById("categories_alone").style.display="none";
@@ -140,6 +155,7 @@ window.onload = function() {
 		hideAllLogosExceptPara(2);
 	}
 
+	//Show group explanation
 	document.getElementById("explain_group_button").onclick = function() {
 		document.getElementById("explain_menu").style.display="none";
 		document.getElementsByClassName("explain_container")[0].style.display="block";
@@ -1021,7 +1037,6 @@ window.onload = function() {
 				if (httpRequest.status === 200) {
 					var answer_return = httpRequest.responseText;
 					console.log(temp_element_id);
-					//document.getElementById(temp_element_id).innerHTML += " "+answer_return;
 					console.log(answer_return);
 				} else {
 					answer_return = 'There was a problem with the request.';
