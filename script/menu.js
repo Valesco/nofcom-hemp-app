@@ -155,7 +155,7 @@ window.onload = function() {
 		hideAllLogosExceptPara(2);
 	}
 
-	//Show group explanation
+	//Show leader explanation
 	document.getElementById("explain_group_button").onclick = function() {
 		document.getElementById("explain_menu").style.display="none";
 		document.getElementsByClassName("explain_container")[0].style.display="block";
@@ -163,6 +163,7 @@ window.onload = function() {
 		hideAllLogosExceptPara(3);
 	}
 
+	//Show participation explanation
 	document.getElementById("explain_part_button").onclick = function() {
 		document.getElementById("explain_menu").style.display="none";
 		document.getElementsByClassName("explain_container")[0].style.display="block";
@@ -170,12 +171,14 @@ window.onload = function() {
 		hideAllLogosExceptPara(1);
 	}
 
+	//Go back to alone explanation button
 	document.getElementsByClassName("back_to_explain_button")[0].onclick = function() {
 		document.getElementsByClassName("alone_select_categories_container")[0].style.display="none";
 		document.getElementsByClassName("explain_container")[0].style.display="block";
 		document.getElementById("explain_alone").style.display="block";
 	}
 
+	//All back to start menu buttons
 	for(var i = 0; i < document.getElementsByClassName("back_to_start_button").length; i++) {
 		document.getElementsByClassName("back_to_start_button")[i].onclick = function() {
 			document.getElementById("explain_group").style.display="none";
@@ -188,6 +191,7 @@ window.onload = function() {
 		}
 	}
 
+	//Show login as leader
 	document.getElementById("chosen_username_back").onclick = function() {
 		document.getElementsByClassName("pre_new_user_prompt_container")[0].style.display="block";
 		document.getElementsByClassName("new_user_prompt_container")[0].style.display="none";
@@ -196,6 +200,7 @@ window.onload = function() {
 		document.getElementById("chosen_username").style.display="block";
 	}
 
+	//Show pre-login screen and if the user is logged in
 	document.getElementById("play_group").onclick = function() {
 		document.getElementById("start_menu").style.display="none";
 		document.getElementsByClassName("pre_new_user_prompt_container")[0].style.display="block";
@@ -213,6 +218,7 @@ window.onload = function() {
 		}
 	}
 
+	//Show login as participator of a group
 	document.getElementById("user_chosen_no").onclick = function() {
 		//console.log(active_user);
 		document.getElementById("new_user_prompt_title").innerHTML="Inloggen als deelnemer";
@@ -233,11 +239,13 @@ window.onload = function() {
 		new_user = 1;
 	}
 
+	//Reload game
 	document.getElementById("reload").onclick = function() {
 		console.log("reload");
 		window.location.reload();
 	}
 
+	//Login as leader screen
 	document.getElementById("user_chosen_yes").onclick = function() {
 		//console.log(active_user);
 		document.getElementById("new_user_prompt_title").innerHTML="Inloggen als beheerder";
@@ -254,6 +262,7 @@ window.onload = function() {
 		new_user = 1;
 	}
 
+	//Show screen to create a group
 	document.getElementById("chosen_new_group").onclick = function() {
 		document.getElementsByClassName("lobby_admin")[0].style.display="none";
 		document.getElementsByClassName("create_group_container")[0].style.display="block";
@@ -263,6 +272,7 @@ window.onload = function() {
 		getAllUsersCreateGroupList();
 	}
 
+	//Show lobby and check if admin or not
 	for(var i = 0; i < document.getElementsByClassName("chosen_menu_group").length; i++) {
 		document.getElementsByClassName("chosen_menu_group")[i].onclick = function() {
 			getNewUserInterval = 0;
@@ -283,11 +293,13 @@ window.onload = function() {
 		}
 	}
 
+	//Play all groups trigger
 	document.getElementById("play_all").onclick = function() {
 		document.getElementById("play_all").innerHTML = "<p>Loading..</p>";
 		playAll();
 	}
 
+	//Stop requesting group AJAX loop
 	for(var i = 0; i < document.getElementsByClassName("chosen_menu").length; i++) {
 		document.getElementsByClassName("chosen_menu")[i].onclick = function() {
 			getNewUserInterval = 0;
@@ -303,6 +315,7 @@ window.onload = function() {
 		}
 	}
 
+	//Create a new group trigger and send request to controller
 	document.getElementById("creategroup").onclick = function() {
 		var group_name = document.getElementById("groupname").value;
 		document.getElementById("creategroup").style.display="none";
@@ -354,7 +367,7 @@ window.onload = function() {
 		}
 	}
 
-
+	//Get age of user
 	function getAge(dateString) {
 		var dates = dateString.split("-");
 		var d = new Date();
@@ -387,6 +400,7 @@ window.onload = function() {
 		next_date(e);
 	};
 
+	//Automatically go to next input element
 	function next_date(e) {
 		var length = e.target.value.length;
 		var max = e.target.maxLength;
@@ -405,28 +419,31 @@ window.onload = function() {
 		}
 	}
 
+	//Logout
 	document.getElementById("user_chosen_logout").onclick = function() {
 		eraseCookie('name');
 		eraseCookie('token');
 		location.reload(-1);
 	}
 
+	//Back to start
 	document.getElementById("back_to_login").onclick = function() {
 		location.reload(-1);
 	}
-
+	//Back to start
 	document.getElementById("user_chosen_menu").onclick = function() {
 		location.reload(-1);
 	}
-
+	//Back to start
 	document.getElementById("user_chosen_menu").onclick = function() {
 		location.reload(-1);
 	}
-
+	//Back to start
 	document.getElementById("back_to_login_admin").onclick = function() {
 		location.reload(-1);
 	}
 
+	//Check user
 	document.getElementById("chosen_username").onclick = function() {
 		document.getElementById("chosen_username").style.display="none";
 		var leadername = document.getElementById("leadername").value;
@@ -443,14 +460,19 @@ window.onload = function() {
 				var age = getAge(temp_age);
 				checkUsername(temp_name,'create',leadercode,leadername,leadersurname,surname,temp_age,age,-1);
 				//console.log(temp_name,'check',surname,temp_age,age,-1);
+			} else {
+				document.getElementById("chosen_username").style.display="block";
 			}
 		} else if (new_user == 0) {
 			if (name.length > 1 && surname.length > 1 && age_d.length > 1 && age_m.length > 1 && age_y.length > 1) {
 				//console.log("Wachtend op groepsindeling door beheerder.");
+			} else {
+				document.getElementById("chosen_username").style.display="block";
 			}
 		}
 	}
 
+	//Play all groups
 	function playAll() {
 		var item_length = document.getElementsByClassName("lobby_item_list")[1].children.length;
 		//console.log(item_length);
@@ -462,6 +484,7 @@ window.onload = function() {
 		//console.log("do et");
 	}
 
+	//Get maximum amount of categories
 	function getMax() {
 		var token = readCookie('token');
 		var httpRequest = new XMLHttpRequest();
@@ -489,6 +512,7 @@ window.onload = function() {
 		}
 	}
 
+	//Send play ping to users with group_id
 	function sendPlayPingToUsers(id) {
 		var token = readCookie('token');
 		var httpRequest = new XMLHttpRequest();
@@ -515,10 +539,12 @@ window.onload = function() {
 		}
 	}
 
+	//hide question container
 	function hideQandAShowMainMenu() {
 		document.getElementsByClassName("question_container")[0].style.display="none";
 	}
 
+	//Check if admin, otherwise logout
 	function getAdminByUserToken(token) {
 		var httpRequest = new XMLHttpRequest();
 		var answer_return;
@@ -543,6 +569,7 @@ window.onload = function() {
 		}
 	}
 
+	//Check if admin by validating token
 	function checkAdmin(token) {
 		var httpRequest = new XMLHttpRequest();
 		var answer_return;
@@ -572,6 +599,7 @@ window.onload = function() {
 		}
 	}
 
+	//Check if admin by validating token and get groups
 	function validateAdmin(token) {
 		var httpRequest = new XMLHttpRequest();
 		var answer_return;
@@ -604,6 +632,7 @@ window.onload = function() {
 		}
 	}
 
+	//Get groups and show them in container
 	function getGroups() {
 		setWaitingToTrue();
 		document.getElementById("username_show").innerHTML = "Ingelogd als: "+readCookie('name');
@@ -690,6 +719,7 @@ window.onload = function() {
 		}
 	}
 
+	//Timer delay
 	var delay = ( function() {
 		var timer = 0;
 		return function(callback, ms) {
@@ -698,6 +728,7 @@ window.onload = function() {
 		};
 	})();
 
+	//Get the current groupname and how many questions
 	function getGroupNameAndQuantity(id) {
 		var httpRequest = new XMLHttpRequest();
 		var answer_return;
@@ -717,6 +748,7 @@ window.onload = function() {
 		}
 	}
 
+	//Get all participators of a group
 	function getGroupUsers(id) {
 		if (getNewUserInterval == 1 && stopRequestingLobby == 0) {
 			var httpRequest = new XMLHttpRequest();
@@ -748,6 +780,7 @@ window.onload = function() {
 								}
 							}
 						}
+						//Kick user
 						if (document.getElementsByClassName("kick").length > 0) {
 							for(var i = 0; i < document.getElementsByClassName("kick").length; i++) {
 								document.getElementsByClassName("kick")[i].onclick = function() {
@@ -756,6 +789,7 @@ window.onload = function() {
 								}
 							}
 						}
+						//Play with group
 						document.getElementById("play").onclick = function() {
 							playAll();
 							document.getElementById("exit_group").style.display="none";
@@ -773,6 +807,7 @@ window.onload = function() {
 		}
 	}
 
+	//Check if user has connection
 	function setTimeOut(id) {
 		var httpRequest = new XMLHttpRequest();
 		var answer_return;
@@ -791,6 +826,7 @@ window.onload = function() {
 		}
 	}
 
+	//User is not waiting
 	function setWaitingToFalse() {
 		var session_token= readCookie('token');
 		var httpRequest = new XMLHttpRequest();
@@ -811,6 +847,7 @@ window.onload = function() {
 		}
 	}
 
+	//User is waiting with last ping, this is a check if user is still active or connected
 	function setWaitingToTrue() {
 		var session_token= readCookie('token');
 		var httpRequest = new XMLHttpRequest();
@@ -832,6 +869,7 @@ window.onload = function() {
 		}
 	}
 
+	//Check if user is going to play or has been kicked
 	function checkLobbyStatus(token,group_id) {
 		var httpRequest = new XMLHttpRequest();
 		if(!httpRequest) return false;
@@ -866,6 +904,7 @@ window.onload = function() {
 		}
 	}
 
+	//Kick user by user_id and check if admin
 	function kickUser(id) {
 		var token = readCookie('token');
 		var httpRequest = new XMLHttpRequest();
@@ -888,6 +927,7 @@ window.onload = function() {
 		}
 	}
 
+	//Join group
 	function joinGroup(id) {
 		questions_answered = [];
 		glob_group_id = id;
@@ -922,6 +962,7 @@ window.onload = function() {
 		}
 	}
 
+	//Exit all groups
 	function exitAllGroups() {
 		if (readCookie('token').length > 1) {
 			glob_group_id = -1;
@@ -946,6 +987,7 @@ window.onload = function() {
 		}
 	}
 
+	//Empty question and answers container
 	function emptyQuestionAnswers() {
 		document.getElementsByClassName("question")[0].innerHTML = "";
 		for(var i = 0; i < 4; i++) {
@@ -953,6 +995,7 @@ window.onload = function() {
 		}
 	}
 
+	//Show endscore
 	function showFinalScoreGroup(score,amount_of_questions) {
 		document.getElementsByClassName("question_container")[0].style.display="none";
 		document.getElementsByClassName("category_container")[0].style.display="none";
@@ -968,6 +1011,7 @@ window.onload = function() {
 		}
 	}
 
+	//Get all answers user has selected
 	function getAnswersFromUser(id,name,group_id) {
 		document.getElementsByClassName("user_answers_container")[0].innerHTML = "Loading..";
 		document.getElementsByClassName("inner_pos_score")[0].style.display="none";
@@ -1015,6 +1059,7 @@ window.onload = function() {
 		}
 	}
 
+	//Back to admin scores
 	function backToAdminScores() {
 		document.getElementsByClassName("inner_pos_score")[0].style.display="block";
 		document.getElementsByClassName("user_answers_container")[0].style.display="none";
@@ -1024,6 +1069,7 @@ window.onload = function() {
 		document.getElementById("end_text").style.fontSize = "26px";
 	}
 
+	//Get maximum amount of points to be scored
 	function getMaxScoreCount(temp_element_id) {
 		var token = readCookie('token');
 		var httpRequest = new XMLHttpRequest();
@@ -1045,6 +1091,7 @@ window.onload = function() {
 		}
 	}
 
+	//Show admin scores, all users in group
 	function showAdminScores(amount_of_questions) {
 		stopRequestingLobbyEndScores = 0;
 		var admin_token = readCookie('token');
@@ -1100,6 +1147,7 @@ window.onload = function() {
 		}
 	}
 
+	//Check if username cookie exists or not and trigger validation
 	function checkUsername(temp_name,check,leadercode,leadername,leadersurname,surname,temp_age,age) {
 		//console.log("Checking username..");
 		if (check == "check") {
@@ -1120,6 +1168,7 @@ window.onload = function() {
 		}
 	}
 
+	//Show prompt
 	function promptOverlay(text) {
 		console.log(text);
 		document.getElementsByClassName("prompt_overlay")[0].style.display="block";
@@ -1129,6 +1178,7 @@ window.onload = function() {
 		};
 	}
 
+	//Validate a user by parameters and return which type the user is
 	function validateUser(leadercode,leadername,leadersurname,temp_name,age,surname,temp_age) {
 		var httpRequest;
 		httpRequest = new XMLHttpRequest();
@@ -1181,6 +1231,7 @@ window.onload = function() {
 		}
 	}
 
+	//Show the category popup before a question starts
 	function categoryPrompt(category) {
 		document.getElementsByClassName("question_container")[0].style.display = "none";
 		var timer = 2750;
@@ -1222,6 +1273,7 @@ window.onload = function() {
 		}, timer+750);
 	}
 
+	//Fill the questions with answers
 	function fillQuestions() {
 		var answer_return, httpRequest;
 		httpRequest = new XMLHttpRequest();
@@ -1262,6 +1314,7 @@ window.onload = function() {
 					var current_question_id;
 					var category_name;
 
+					//Show a question with answers and trigger if the question is the first new one of a category or not.
 					function getCategoryWithQuestions(category_progression) {
 						category_questions = [];
 						amount_of_questions = 0;
@@ -1288,6 +1341,7 @@ window.onload = function() {
 						}
 					}
 
+					//On user selecting answer of question and if user presses yes when asked for validation.
 					for (var i = 0; i < 4; i++) {
 						document.getElementsByClassName("answers_"+i)[0].onclick = function(i) {
 							document.getElementById("chosen_yes").style.display = "block";
@@ -1342,6 +1396,7 @@ window.onload = function() {
 			}
 		}
 
+		//Push possible answers in frontend
 		function fillContent(question_id) {
 			var answer_return, httpRequest;
 			var user_id = readCookie('token');
@@ -1380,6 +1435,7 @@ window.onload = function() {
 		}
 	}
 
+	//Submit selection answer of question to database and check if correct.
 	function validateQuestion(question_id,potential_answer,end,amount_of_questions) {
 		var answer_return, httpRequest;
 		var user_id = readCookie('token');
@@ -1408,6 +1464,7 @@ window.onload = function() {
 		}
 	}
 
+	//Fill questions trigger
 	function alertContents(answer_return) {
 		if (answer_return == "There was a problem with the request.") {
 			//console.log("Error! -There was a problem with the request.");
@@ -1416,6 +1473,7 @@ window.onload = function() {
 		}
 	}
 
+	//Last question answered and show final score and check if alone or group
 	function endGame(local_score,amount_of_questions) {
 		//console.log("ENDGAME SCORE "+local_score);
 		document.getElementsByClassName("chosen_container")[0].style.display="none";
@@ -1448,6 +1506,7 @@ window.onload = function() {
 		//location.reload(-1);
 	}
 
+	//Send to database if user is finished
 	function finishUser() {
 		var answer_return, httpRequest;
 		var token = readCookie('token');
@@ -1471,6 +1530,7 @@ window.onload = function() {
 	var users_create_group_selected = [];
 	var check_new_group_state = false;
 
+	//Get all the users with you as groupleader.
 	function getAllUsersCreateGroupList() {
 		var answer_return, httpRequest;
 		users_create_group_selected = [];
@@ -1483,6 +1543,16 @@ window.onload = function() {
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
+					if (document.getElementsByClassName("checkbox_users").length == 0) {
+						document.getElementById("creategroup").style.display="none";
+					} else {
+						document.getElementById("creategroup").style.display="block";
+					}
+					if (document.getElementsByClassName("checkbox_users").length > 1) {
+						document.getElementsByClassName("user_group_selection_item")[0].style.display="block";
+					} else {
+						document.getElementsByClassName("user_group_selection_item")[0].style.display="none";
+					}
 					if (document.getElementsByClassName("checkbox_users")[0] != undefined) {
 						if (document.getElementById("user_group_check_-1").checked == true) {
 							for (var i = 0; i < document.getElementsByClassName("checkbox_users").length; i++) {
@@ -1497,6 +1567,7 @@ window.onload = function() {
 							check_new_group_state = false;
 						}
 						for (var i = 0; i < document.getElementsByClassName("checkbox_users").length; i++) {
+							console.log(document.getElementsByClassName("checkbox_users").length);
 							if (document.getElementsByClassName("checkbox_users")[i].checked) {
 								users_create_group_selected.push(document.getElementsByClassName("checkbox_users")[i].id.split("_")[3]);
 							}
