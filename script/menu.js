@@ -21,7 +21,7 @@ window.onload = function() {
 	var stopRequestingLobbyEndScores = 0;
 	var getNewUserInterval = 0;
 	var temp_group_name = "";
-	var temp_local_cats;
+	var temp_local_cats = "";
 	const username = readCookie('name');
 
 	checkUsername(username,"check");
@@ -1021,7 +1021,7 @@ window.onload = function() {
 				if (httpRequest.status === 200) {
 					var answer_return = httpRequest.responseText;
 					console.log(temp_element_id);
-					document.getElementById(temp_element_id).innerHTML += " "+answer_return;
+					//document.getElementById(temp_element_id).innerHTML += " "+answer_return;
 					console.log(answer_return);
 				} else {
 					answer_return = 'There was a problem with the request.';
