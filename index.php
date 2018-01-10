@@ -128,7 +128,7 @@
                 <div class="dark_overlay pre_new_user_prompt_container">
                     <div class="pre_new_user_prompt">
                         <h1 id="pre_new_user_prompt_text"></h1>
-                        <h1 id="admin_code_title">Als beheerder heb je een code nodig</h1>
+                        <h1 id="admin_code_title">Als beheerder heb je een code nodig. <br> Als deelnemer moet je beheerder aangemeld zijn.</h1>
                         <div class="chosen_button_container">
                             <div class="chosen_button" id="user_chosen_yes">
                                 <p>Beheerder</p>

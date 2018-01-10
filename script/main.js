@@ -2,6 +2,9 @@ var container, stats, clock, camera, scene, renderer, model, blades, mill, resta
 var birds, bird;
 var boid, boids;
 
+var boat_forward_z = 0.2;
+var boat_forward_x = 0.1;
+
 init();
 animate();
 
@@ -24,6 +27,12 @@ function init() {
 		scene.add( model );
 		scene.add( blades );
 		scene.add( mill );
+		scene.add( boat );
+
+		boat.position.z = -4;
+		boat.position.x = 4;
+		boat.position.y = -0.575;
+		boat.rotation.z = 0.5;
 
         blades.position.x = -9.5;
 		blades.position.z = -7.5;
@@ -57,6 +66,9 @@ function init() {
 	});
 	loader.load( 'assets/models/mill.dae', function ( collada ) {
 		mill = collada.scene;
+	});
+	loader.load( 'assets/models/boat.dae', function ( collada ) {
+		boat = collada.scene;
 	});
 
 	var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.85 );
@@ -120,6 +132,19 @@ function render() {
 		camera.position.y = 10;
         camera.lookAt({x: -9.5, y: 5, z: -7.5});
         blades.rotation.x += 0.015;
+		var speed_mult = 0.25;
+		boat.position.z += boat_forward_z * speed_mult;
+		boat.position.x += boat_forward_x * speed_mult;
+		if (boat.position.z >= 30) {
+			boat_forward_z = -boat_forward_z;
+			boat_forward_x = -boat_forward_x;
+			boat.rotation.z = 3.65;
+		} else if (boat.position.z <= -60) {
+			boat_forward_z = -boat_forward_z;
+			boat_forward_x = -boat_forward_x;
+			boat.rotation.z = 0.5;
+		}
+		//console.log(boat.position.z,boat.position.x);
 	}
 	for ( var i = 0, il = birds.length; i < il; i++ ) {
 		boid = boids[ i ];

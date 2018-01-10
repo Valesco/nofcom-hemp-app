@@ -455,7 +455,7 @@ window.onload = function() {
 		var age_m = document.getElementById("age_m").value;
 		var age_y = document.getElementById("age_y").value;
 		if (new_user == 1) {
-			if (temp_name.length > 1 && temp_name.length > 1 && surname.length > 1 && age_d.length > 1 && age_m.length > 1 && age_y.length > 1) {
+			if (temp_name.length > 1 && temp_name.length > 1 && surname.length > 1 && age_d.length > 1 && age_m.length > 1 && age_y.length > 1 && age_y >= 1918 && age_d <= 31 && age_m <= 12 && age_y <= 2015) {
 				var temp_age = age_d+'-'+age_m+'-'+age_y;
 				var age = getAge(temp_age);
 				checkUsername(temp_name,'create',leadercode,leadername,leadersurname,surname,temp_age,age,-1);
@@ -578,19 +578,18 @@ window.onload = function() {
 		httpRequest.open('GET','controller.php?function=validateAdmin&token='+token);
 		httpRequest.send();
 
+		document.getElementById("admin_code_title").innerHTML = "Laden..";
+
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
 					answer_return = httpRequest.responseText;
+					document.getElementById("user_chosen_yes").style.display="block";
+					document.getElementById("user_chosen_yes").style.width="100%";
 					if (answer_return == "is_admin") {
 						frontadmin = 1;
-						document.getElementById("user_chosen_yes").style.display="block";
-						document.getElementById("user_chosen_yes").style.width="100%";
 						document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als beheerder";
 					} else {
-						document.getElementById("user_chosen_no").style.display="block";
-						document.getElementById("user_chosen_no").style.width="100%";
-						document.getElementById("admin_code_title").innerHTML="";
 						document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als deelnemer";
 						getAdminByUserToken(readCookie('token'));
 					}
