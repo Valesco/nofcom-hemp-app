@@ -387,7 +387,7 @@ window.onload = function() {
                             //console.log(questions[j]);
 
                             if (questions[j][0] != "|") {
-                                content += "<div class='question' style='display:none;' id='question_"+questions[j].split(";")[0].split("=")[0]+"'><p>"+questions[j].split(";")[0].split("=")[1].split("^")[0]+"</p>";
+                                content += "<div class='question' style='display:none;' id='question_"+questions[j].split(";")[0].split("=")[0]+"'><p>"+questions[j].split(";")[0].split("=")[1].split("^")[0]+"<br>Leeftijd: ("+questions[j].split(";")[0].split("=")[1].split("^")[1]+")</p>";
                                 content += "<div class='dropdown_button_question'>+</div>";
                                 content += "<div class='remove_button'>X</div>";
                                 content += "<div style='display:none;' id='edit_"+questions[j].split(";")[0].split("=")[0]+"' class='edit_question_button'>Bewerken</div>";

@@ -23,11 +23,12 @@ function init() {
 	clock = new THREE.Clock();
 	// loading manager
 	var loadingManager = new THREE.LoadingManager( function(loaded) {
-
 		scene.add( model );
 		scene.add( blades );
 		scene.add( mill );
 		scene.add( boat );
+
+		//console.log(model);
 
 		boat.position.z = -4;
 		boat.position.x = 4;
@@ -57,9 +58,23 @@ function init() {
 	loader.options.convertUpAxis = true;
 	loader.load( 'assets/models/hemp_total.dae', function ( collada ) {
 		model = collada.scene;
+		//console.log(model);
 		var skybox = model.children[0].children[1];
 		var skybox_material = skybox.material[1];
 		skybox_material.color = {r: 2.1, g: 2.1, b: 2.1};
+
+		var water_parent = model.children[0].children[0];
+		var water = water_parent.children[30].material;
+		//for(var i = 0; i < water_parent.children.length; i++) console.log("water =",i,water_parent.children[i].material);
+		water.transparent = true;
+		water.opacity = 0.7;
+
+		console.log(water);
+
+		//water.visible = false;
+
+
+		console.log(water);
 	});
 	loader.load( 'assets/models/blades.dae', function ( collada ) {
 		blades = collada.scene;
@@ -81,6 +96,7 @@ function init() {
 	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setClearColor(0xEEEEEE);
 
 	container.appendChild( renderer.domElement );
 	window.addEventListener( 'resize', onWindowResize, false );
@@ -125,7 +141,13 @@ function animate() {
 
 function render() {
 	var delta = clock.getDelta();
-	if ( mill !== undefined ) {
+	if ( mill !== undefined && boat !== undefined && model !== undefined) {
+		var water_parent = model.children[0].children[0];
+		var water = water_parent.children[30].material;
+
+		water.map.offset.x -= 0.025*0.15;
+		water.map.offset.y += 0.05*0.15;
+
         rotation -= 0.003;
         camera.position.x = Math.sin(rotation) * 50;
         camera.position.z = Math.cos(rotation) * 50;

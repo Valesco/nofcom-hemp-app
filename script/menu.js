@@ -2,8 +2,8 @@ window.onload = function() {
 
 	//On moment of exiting browser, fire these functions
 	window.onbeforeunload = function() {
-		setWaitingToFalse();
-		exitAllGroups();
+		//setWaitingToFalse();
+		//exitAllGroups();
 	}
 
 	var questions_answered = [];
@@ -35,8 +35,11 @@ window.onload = function() {
 		exitAllGroups();
 	}
 
+	checkIntroCode(readCookie('code'));
+
 	//If code doesn't exist, show intro code
 	if (readCookie('code') != null) {
+		console.log("CHECK CODE");
 		checkIntroCode(readCookie('code'));
 	}
 
@@ -98,9 +101,13 @@ window.onload = function() {
 					var answer_return = httpRequest.responseText;
 					console.log(answer_return);
 					if (answer_return == "false") {
+						console.log("dont show");
 						eraseCookie('code');
-						location.reload(-1);
+						document.getElementById("code_overlay").style.display = "block";
+						document.getElementsByClassName("super_main_content")[0].style.display="none";
 					} else if (answer_return == "true") {
+						console.log("show");
+						document.getElementsByClassName("super_main_content")[0].style.display="block";
 						document.getElementById("code_overlay").style.display = "none";
 						if (readCookie('code') == null) {
 							createCookie('code',code);
@@ -501,7 +508,7 @@ window.onload = function() {
 					document.getElementById("amount_of_questions_per_cat").max = answer_return;
 					document.getElementById("max").innerHTML = "*minimaal 1 en maximaal "+answer_return;
 
-					document.getElementById("alone_max_questions").value = answer_return;
+					document.getElementById("alone_max_questions").value = answer_return-1;
 					document.getElementById("alone_max_questions").max = answer_return;
 					document.getElementById("max_alone").innerHTML = "*minimaal 1 en maximaal "+answer_return;
 					console.log(answer_return);
@@ -520,8 +527,6 @@ window.onload = function() {
 		httpRequest.onreadystatechange = validate;
 		httpRequest.open('GET','controller.php?function=playPing&token='+token+'&group_id='+id);
 		httpRequest.send();
-
-		//alert("sending..");
 
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -584,13 +589,18 @@ window.onload = function() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
 					answer_return = httpRequest.responseText;
-					document.getElementById("user_chosen_yes").style.display="block";
-					document.getElementById("user_chosen_yes").style.width="100%";
+					document.getElementById("user_chosen_yes").style.display="no";
+					document.getElementById("user_chosen_no").style.display="no";
 					if (answer_return == "is_admin") {
 						frontadmin = 1;
 						document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als beheerder";
+						document.getElementById("user_chosen_yes").style.display="block";
+						document.getElementById("user_chosen_yes").style.width="100%";
 					} else {
+						frontadmin = 0;
 						document.getElementById("admin_code_title").innerHTML="Je bent ingelogd als deelnemer";
+						document.getElementById("user_chosen_no").style.display="block";
+						document.getElementById("user_chosen_no").style.width="100%";
 						getAdminByUserToken(readCookie('token'));
 					}
 				}
@@ -1329,15 +1339,27 @@ window.onload = function() {
 
 							//console.log(amount_of_questions);
 						}
-						if(category_questions[question_progression] != undefined) {
-							current_question_id = category_questions[question_progression];
-							fillContent(current_question_id);
-						}
 						document.getElementsByClassName("category")[0].innerHTML = category_name;
 
 						if (!is_same_category) {
 							categoryPrompt(category_name);
 						}
+
+						if(category_questions[question_progression] != undefined) {
+							current_question_id = category_questions[question_progression];
+							console.log(current_question_id);
+							if (current_question_id != "") {
+								fillContent(current_question_id);
+							} else {
+								console.log("break");
+								category_progression++;
+								console.log(category_progression, (categories_with_questions.length-1));
+								if (category_progression == categories_with_questions.length-1) {
+									endGame(local_score,amount_of_questions);
+								}
+							}
+						}
+
 					}
 
 					//On user selecting answer of question and if user presses yes when asked for validation.
@@ -1354,6 +1376,7 @@ window.onload = function() {
 
 							var potential_answer = this.id;
 							document.getElementById("chosen_yes").onclick = function() {
+								console.log("category_questions="+category_questions.length,question_progression);
 								if (question_progression == category_questions.length-1) {
 									question_progression = 0;
 									category_progression++;
@@ -1366,6 +1389,10 @@ window.onload = function() {
 
 									console.log("next question in same category");
 									is_same_category = true;
+								}
+
+								if(category_progression == 4) {
+									endGame(local_score,amount_of_questions);
 								}
 
 								if (category_progression == categories_with_questions.length-1) {
@@ -1474,7 +1501,7 @@ window.onload = function() {
 
 	//Last question answered and show final score and check if alone or group
 	function endGame(local_score,amount_of_questions) {
-		//console.log("ENDGAME SCORE "+local_score);
+		console.log("ENDGAME SCORE "+local_score);
 		document.getElementsByClassName("chosen_container")[0].style.display="none";
 		emptyQuestionAnswers();
 		var answer_return, httpRequest;
@@ -1616,7 +1643,7 @@ window.onload = function() {
 
 	function fillAloneCategoriesContent() {
 		checkIntroCode(readCookie('code'));
-		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
+		document.getElementsByClassName("alone_select_categories")[0].innerHTML = "Loading..";
 		document.getElementsByClassName("categories_group_selection_container")[0].innerHTML = "";
 
 		if(readCookie('age') != null) {
@@ -1633,6 +1660,7 @@ window.onload = function() {
 		function validate() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
 				if (httpRequest.status === 200) {
+					document.getElementsByClassName("alone_select_categories")[0].innerHTML = "";
 					answer_return = httpRequest.responseText;
 					category_items = answer_return.split("|");
 					for(var i = 0; i < category_items.length-1; i++) {

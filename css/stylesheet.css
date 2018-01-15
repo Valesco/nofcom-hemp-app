@@ -1344,6 +1344,10 @@ input {
     display:block;
 }
 
+.super_main_content {
+    display:none;
+}
+
 #age_alone {
     width: 50px;
     margin: 0 auto;
@@ -1367,12 +1371,14 @@ input {
     min-height:500px;
     width:100%;
     z-index: 2;
+    display:none;
     position: absolute;
     background-color: #dedede;
 }
 
 .code_overlay_inner {
     width:80%;
+    max-width: 750px;
     margin: 0 auto;
     margin-top: 120px;
     text-align: center;

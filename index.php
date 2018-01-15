@@ -17,10 +17,14 @@
         <link rel="stylesheet" href="assets/icons/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/stylesheet.css">
         <script type="text/javascript" src="script/engine/three.min.js"></script>
-        <script type="text/javascript" src="script/engine/SimplifyModifier.js"></script>
         <script type="text/javascript" src="script/engine/ColladaLoader2.js"></script>
     </head>
     <body>
+        <div class="logo_container">
+            <img src="assets/img/logo_1.png" class="test_logo" id="logo_1">
+            <img src="assets/img/logo_2.png" class="test_logo" id="logo_2">
+            <img src="assets/img/logo_3.png" class="test_logo" id="logo_3">
+        </div>
         <div id="code_overlay">
             <div class="code_overlay_inner">
                 <h1>Om de app te spelen heb je de code nodig.</h1>
@@ -195,11 +199,6 @@
                     <h1 class="vibrate-1">Loading..</h1>
                     <h1 class="vibrate-1" id="debug"></h1>
                 </div>
-                <div class="logo_container">
-                    <img src="assets/img/logo_1.png" class="test_logo" id="logo_1">
-                    <img src="assets/img/logo_2.png" class="test_logo" id="logo_2">
-                    <img src="assets/img/logo_3.png" class="test_logo" id="logo_3">
-                </div>
                 <div id="container"></div>
                 <div class="main_menu_container slide-in-bottom" id="start_menu">
                     <div class="main_menu_item flip-in-hor-bottom" id="explain">Uitleg</div>
@@ -243,9 +242,9 @@
                             Laden..
                         </div>
                         <h1>Wat is je leeftijd?</h1>
-                        <input id="age_alone" type="tel" maxlength="2" value="">
+                        <input id="age_alone" type="tel" maxlength="2" value="16">
                         <h1>Maximaal aantal vragen per categorie?</h1>
-                        <input id="alone_max_questions" type="number" min="1" max="100" value="">
+                        <input id="alone_max_questions" type="tel" min="1" max="100" value="3">
                         <h4 id="max_alone">*minimaal 1 en maximaal</h4>
                         <div id="alone">
                             <p>Ik wil spelen!</p>

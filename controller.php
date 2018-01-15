@@ -1,4 +1,5 @@
 <?php
+    //echo "oke";
     class CallFunctions {
 
         private $_connection;
@@ -463,7 +464,6 @@
             shuffle($category_array);
 
             for($i = 0; $i < count($category_array); $i++) {
-                //echo $category_array[$i];
                 if($result_categories = $mysqli->query("SELECT * FROM categories WHERE id='$category_array[$i]'")) {
                     $row = mysqli_fetch_all($result_categories, MYSQLI_ASSOC);
                     for ($j = 0; $j < $result_categories->num_rows; $j++) {
@@ -476,7 +476,9 @@
                             $row_questions = mysqli_fetch_all($result_questions, MYSQLI_ASSOC);
                             if (($result_questions->num_rows) > 0) {
                                 for($k = 0; $k < $amount_questions; $k++) {
-                                    echo $row_questions[$k]["id"];
+                                    if($k <= $result_questions->num_rows-1) {
+                                        echo $row_questions[$k]["id"];
+                                    }
                                     if ($k != $amount_questions-1) echo ",";
                                 }
                             }
@@ -853,6 +855,7 @@
         }
 
         function getMaxScoreCount() {
+            echo "AAAGHH";
             $db = CallFunctions::getInstance();
             $mysqli = $db->getConnection();
             $session_token = $mysqli->real_escape_string($_GET['session_token']);
